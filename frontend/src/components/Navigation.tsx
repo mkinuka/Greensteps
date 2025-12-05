@@ -10,13 +10,13 @@ const links = [
   { to: "/about", label: "About" }
 ];
     return <>
-    <nav>
+    <nav className="fixed left-0 top-0 h-full w-64 p-6" style={{ backgroundColor: '#101935' }}>
     {links.map(link => (
-        <li key={link.to}>
+        <li key={link.to} className="list-none">
             <NavLink to={link.to} className={({ isActive }) =>
             isActive
-          ? "text-blue-600 font-semibold underline" 
-          : "text-gray-800 hover:text-blue-600"        
+          ? "text-white font-semibold underline" 
+          : "text-white hover:text-gray-300"        
         }
                 >{link.label}</NavLink>
         </li>
