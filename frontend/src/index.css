@@ -1,14 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #D3C4C4;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* viewidth classes */
+.ml-10vw { margin-left: 10vw}
+.mr-10vw { margin-right: 10vw}
+
+.ml-20vw { margin-left: 20vw}
+.mr-20vw { margin-right: 20vw}
+
+/* viewhight classes */
+
+.mb-2vh { margin-bottom: 2vw}
+.mt-2vh { margin-top: 2vw}
+
+
+.mb-8vh { margin-bottom: 8vw}
+.mt-8vh { margin-top: 8vw}
+
+
+.mb-10vh { margin-bottom: 10vw}
+.mt-10vh { margin-top: 10vw}

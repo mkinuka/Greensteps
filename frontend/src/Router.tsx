@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "./pages/Layout";
-import { LandingPage } from "./pages/LandingPage"
+import { LandingPage } from "./pages/LandingPage";
+import { Auth } from "./pages/Auth";
 import { About } from "./pages/About";
 import { Food } from "./pages/Food";
 import { Transport } from "./pages/Transport";
@@ -9,39 +10,42 @@ import { Electricity } from "./pages/Electricity";
 import { DashBoard } from "./pages/Dashboard";
 
 export const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Layout/>,
-        children:[
-            {
-                path: "/",
-                element: <LandingPage/>
-            },
-            {
-                path: "/dashboard",
-                element: <DashBoard/>
-            },
-            {
-                path: "/About",
-                element: <About/>
-            },
-            {
-                path: "/Food",
-                element: <Food/>
-            },
-            {
-                path:"/Transport",
-                element: <Transport/>
-            },
-            {
-                path: "/Shopping",
-                element:<Shopping/>
-            },
-            {
-                path: "/Electricity",
-                element: <Electricity/>
-            }
-
-        ]
-    }
-])
+  {
+    path: "/",
+    element: <LandingPage />,
+  },
+  {
+    path: "/auth",
+    element: <Auth />,
+  },
+  {
+    path: "/app",
+    element: <Layout />,
+    children: [
+      {
+        path: "/app/dashboard",
+        element: <DashBoard />,
+      },
+      {
+        path: "/app/about",
+        element: <About />,
+      },
+      {
+        path: "/app/food",
+        element: <Food />,
+      },
+      {
+        path: "/app/transport",
+        element: <Transport />,
+      },
+      {
+        path: "/app/shopping",
+        element: <Shopping />,
+      },
+      {
+        path: "/app/electricity",
+        element: <Electricity />,
+      },
+    ],
+  },
+]);
