@@ -1,15 +1,31 @@
 import logo from "../assets/GreenSteps-removebg-preview.png";
 import { GoogleLogin, type CredentialResponse } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export const Auth = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/auth/me', {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          navigate('/app/dashboard');
+        }
+      } catch (error) {
+      }
+    };
+    checkAuth();
+  }, [navigate]);
 
   const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
     try {
       const response = await fetch("http://localhost:3000/auth/google", {
         method: "POST",
-        credentials: 'include', // Allow cookies to be sent/received
+        credentials: 'include',
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential })
       });

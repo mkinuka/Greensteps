@@ -33,9 +33,9 @@ router.post('/google', async (req: Request, res: Response) => {
         name: payload.name!,
         picture: payload.picture || '',
       });
-      console.log('✅ New user created:', (user as any).email);
+      console.log('New user created:', (user as any).email);
     } else {
-      console.log('✅ User logged in:', (user as any).email);
+      console.log('User logged in:', (user as any).email);
     }
 
     // Create JWT token
