@@ -1,13 +1,24 @@
 import express from 'express';
+import type { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import authRoutes from './routes/auth.mjs';
 
 dotenv.config();
 
 const app = express(); 
-app.use(express.json());
 
-// MongoDB connection
+// Middleware
+app.use(cors({
+  origin: 'http://localhost:5173',  // Frontend URL
+  credentials: true,                 // Allow cookies
+}));
+app.use(express.json());
+app.use(cookieParser());
+
+// Database connection
 const MONGODB_URI = process.env.MONGODB_URI || '';
 const PORT = process.env.PORT || 3000;
 
@@ -15,9 +26,12 @@ mongoose.connect(MONGODB_URI)
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch((error) => console.error('❌ MongoDB connection error:', error));
 
-app.get("/", (req, res) => { 
-  res.status(200).send("its ok"); 
+// Routes
+app.get("/", (req: Request, res: Response) => { 
+  res.status(200).send("Greensteps API is running"); 
 }); 
+app.use('/auth', authRoutes);
+
 
 app.listen(PORT, () => {
   console.log(`🚀 API running on http://localhost:${PORT}`)

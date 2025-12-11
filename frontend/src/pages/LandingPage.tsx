@@ -3,38 +3,52 @@ import { useState, useEffect } from "react";
 import GreenStepsLogo from "../assets/GreenSteps-removebg-preview.png";
 
 export const LandingPage = () => {
-  // Only use MP4 files for better browser compatibility
-  const videos = ["/video1.mp4", "/video2.mp4"];
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const videos = ["/video1.mp4", "/video2.mp4", "/video3.mp4"];
+  const [activeIndex, setActiveIndex] = useState(0);
   const [videoError, setVideoError] = useState(false);
 
   useEffect(() => {
+    const currentVideo = document.getElementById(`video-${activeIndex}`) as HTMLVideoElement;
+    if (currentVideo) {
+      currentVideo.currentTime = 0;
+      currentVideo.play();
+    }
+  }, [activeIndex]);
+
+  useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videos.length);
-    }, 7000); // Change video every 12 seconds
+      setActiveIndex((prevIndex) => (prevIndex + 1) % videos.length);
+    }, 7000); // Change video every 7 seconds
 
     return () => clearInterval(interval);
   }, [videos.length]);
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Video Background */}
       {!videoError ? (
-        <video
-          key={currentVideoIndex} // This key forces re-render when video changes
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          autoPlay
-          loop
-          muted
-          playsInline
-          onError={(e) => {
-            console.log("Video error:", e);
-            setVideoError(true);
-          }}
-        >
-          <source src={videos[currentVideoIndex]} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <div className="absolute top-0 left-0 w-full h-full">
+          {videos.map((videoSrc, index) => (
+            <video
+              id={`video-${index}`}
+              key={index}
+              className="absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000 ease-in-out"
+              style={{ 
+                opacity: activeIndex === index ? 1 : 0,
+                zIndex: activeIndex === index ? 1 : 0
+              }}
+              muted
+              playsInline
+              preload="auto"
+              onError={(e) => {
+                console.log("Video error:", e);
+                setVideoError(true);
+              }}
+            >
+              <source src={videoSrc} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          ))}
+        </div>
       ) : (
         // Fallback background if video fails
         <div
@@ -45,25 +59,19 @@ export const LandingPage = () => {
         ></div>
       )}
 
-      {/* Content */}
       <div className="relative z-20 flex items-center justify-center min-h-screen">
-        <div className="ml-20vw mr-20vw mt-2vh mb-6">
           <div
-            className="ml-10vw mr-10vw p-8 rounded-2xl flex items-center flex-col backdrop-blur-sm"
+            className="ml-10vw mr-10vw rounded-2xl flex items-center flex-col backdrop-blur-sm w-110 p-8"
             style={{ backgroundColor: "rgba(16, 25, 53, 0.8)" }}
           >
-            <div className="">
-              <h1 className="text-2xl text-white pb-2 font-extrabold">
-                Welcome to Greensteps
+              <h1 className="text-3xl text-white pb-2 font-extrabold text-center">
+                Welcome to <h1 className="text-3xl text-green-600 text-center">GREENSTEPS</h1>
               </h1>
-              <p className="text-white font-bold text-xl">
-                The Greensteps application will help you imporove your daily
-                life goals for climate change, rigister now and become the
-                climate hero you deserve to be
+            <img src={GreenStepsLogo} alt="GreenSteps logo" className="w-sm pb-2" />
+              <p className="text-white font-bold text-xl text-center pb-8">
+                Track your emissions from transport, food, electricity and shopping. Start your journey toward greener habits, one step at a time
               </p>
-            </div>
-            <img src={GreenStepsLogo} alt="GreenSteps logo" className="w-sm" />
-            <p className="text-white font-extrabold text-xl pb-3">
+            <p className="text-white font-extrabold text-s pb-3 text-center">
               Take your First step in the right direction
             </p>
             <NavLink
@@ -74,11 +82,10 @@ export const LandingPage = () => {
                   : "text-white text-2xl px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-300 ease-in-out"
               }
             >
-              Log in
+              Sign up/Log in
             </NavLink>
           </div>
         </div>
-      </div>
     </div>
   );
 };
