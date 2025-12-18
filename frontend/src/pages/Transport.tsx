@@ -1,10 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { CarFront, Plane, TrainFront } from 'lucide-react';
-import { CarForm as CarFormRaw, FlightForm as FlightFormRaw, TrainForm as TrainFormRaw } from "../components/TransportForms";
-
-const CarForm = CarFormRaw as unknown as React.FC<any>;
-const FlightForm = FlightFormRaw as unknown as React.FC<any>;
-const TrainForm = TrainFormRaw as unknown as React.FC<any>;
+import { CarForm, FlightForm, TrainForm } from "../components/TransportForms";
 
 type TransportType = "Car" | "Train" | "Flight";
 
