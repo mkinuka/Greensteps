@@ -31,8 +31,10 @@ export const UserBadge = () => {
 
   return (
     <div>
-      <img className="rounded-full" src={user.picture} alt={user.name} />
-      <h3 className="font-bold text-black">{user.name}</h3>
+    <div className="flex items-center flex-col mt-4 w-fit">
+      <img className="rounded-full size-16" src={user.picture} alt={user.name} />
+      <h3 className="font-bold text-white text-xs">{user.name}</h3>
+    </div>
     </div>
   );
 };

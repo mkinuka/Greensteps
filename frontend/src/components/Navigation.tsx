@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import GreenStepsLogo from "../assets/GreenSteps.png";
+import { UserBadge } from "./UserBadge";
 
 export const Navigation = () => {
   const mainLinks = [
@@ -54,6 +55,7 @@ export const Navigation = () => {
             </NavLink>
           </li>
         ))}
+        <UserBadge></UserBadge>
       </div>
     </nav>
   );
