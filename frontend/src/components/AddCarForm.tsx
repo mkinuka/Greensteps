@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-interface Car {
+export interface Car {
   id?: string;
   name: string;
   fuelType: 'petrol' | 'diesel' | 'hybrid' | 'electric';
-  fuelConsumption?: number; // L/100km for petrol/diesel/hybrid
-  evEngineType?: string; // For electric vehicles
+  fuelConsumption: number;
+  timeStamp: string;
 }
 
 interface AddCarFormProps {
@@ -17,9 +17,9 @@ const AddCarForm = ({ onSubmit, onCancel }: AddCarFormProps) => {
   const [formData, setFormData] = useState({
     name: '',
     fuelType: 'petrol' as 'petrol' | 'diesel' | 'hybrid' | 'electric',
-    fuelConsumption: 0,
-    evEngineType: 'small'
+    fuelConsumption: 0
   });
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -29,30 +29,45 @@ const AddCarForm = ({ onSubmit, onCancel }: AddCarFormProps) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const carData: Omit<Car, 'id'> = {
       name: formData.name,
       fuelType: formData.fuelType,
-      ...(formData.fuelType === 'electric' 
-        ? { evEngineType: formData.evEngineType }
-        : { fuelConsumption: formData.fuelConsumption }
-      )
+      fuelConsumption: formData.fuelConsumption,
+      timeStamp: new Date().toISOString().split('T')[0],
     };
     
-    onSubmit(carData);
-    
-    // Reset form
-    setFormData({
-      name: '',
-      fuelType: 'petrol',
-      fuelConsumption: 0,
-      evEngineType: 'small'
-    });
+    try {
+      const response = await fetch('http://localhost:3000/transport/uploadcars', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(carData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save car');
+      }
+
+      const savedCar = await response.json();
+      onSubmit(savedCar);
+      
+      setFormData({
+        name: '',
+        fuelType: 'petrol',
+        fuelConsumption: 0
+      });
+    } catch (error) {
+      console.error('Error saving car:', error);
+      alert('Failed to save car. Please try again.');
+    }
   };
 
   const isElectric = formData.fuelType === 'electric';
+  const consumptionLabel = isElectric ? 'Energy Consumption (kWh/10km)' : 'Fuel Consumption (L/10km)';
+  const consumptionPlaceholder = isElectric ? 'e.g., 1.85' : 'e.g., 0.75';
 
   return (
     <form onSubmit={handleSubmit} className="add-car-form bg-gray-50 p-6 rounded-lg text-black">
@@ -89,45 +104,23 @@ const AddCarForm = ({ onSubmit, onCancel }: AddCarFormProps) => {
         </select>
       </div>
 
-      {!isElectric ? (
-        <div className="form-group mb-4">
-          <label htmlFor="fuelConsumption" className="text-black block mb-2 font-medium">
-            Fuel Consumption (L/100km)
-          </label>
-          <input
-            type="number"
-            id="fuelConsumption"
-            name="fuelConsumption"
-            value={formData.fuelConsumption}
-            onChange={handleChange}
-            required
-            step="0.1"
-            min="0"
-            className="w-full p-2 border rounded text-black"
-            placeholder="e.g., 7.5"
-          />
-        </div>
-      ) : (
-        <div className="form-group mb-4">
-          <label htmlFor="evEngineType" className="text-black block mb-2 font-medium">
-            EV Engine Type
-          </label>
-          <select
-            id="evEngineType"
-            name="evEngineType"
-            value={formData.evEngineType}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded text-black"
-          >
-            <option value="small">Small (≤ 150 kW)</option>
-            <option value="compact">Compact (151 - 200 kW)</option>
-            <option value="medium">Medium (201 - 300 kW)</option>
-            <option value="large">Large (301 - 400 kW)</option>
-            <option value="performance">Performance (≥ 401 kW)</option>
-          </select>
-        </div>
-      )}
+      <div className="form-group mb-4">
+        <label htmlFor="fuelConsumption" className="text-black block mb-2 font-medium">
+          {consumptionLabel}
+        </label>
+        <input
+          type="number"
+          id="fuelConsumption"
+          name="fuelConsumption"
+          value={formData.fuelConsumption}
+          onChange={handleChange}
+          required
+          step="0.1"
+          min="0"
+          className="w-full p-2 border rounded text-black"
+          placeholder={consumptionPlaceholder}
+        />
+      </div>
 
       <div className="form-actions flex gap-2">
         <button type="submit" className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600">
