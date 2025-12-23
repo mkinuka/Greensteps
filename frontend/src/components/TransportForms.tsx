@@ -1,5 +1,12 @@
-import { useState } from "react";
-import AddCarForm from "../components/AddCarForm"
+import { useState, useEffect } from "react";
+import AddCarForm from "../components/AddCarForm";
+import AirportSearch from "./AirportSearch";
+import type { Airport } from "../utils/airportData";
+import { 
+  fetchAirports, 
+  calculateDistance, 
+  calculateFlightEmissions 
+} from "../utils/airportData";
 
 interface Car {
   _id: string;
@@ -173,16 +180,144 @@ export const TrainForm = () => {
 };
 
 export const FlightForm = () => {
+  const [airports, setAirports] = useState<Airport[]>([]);
+  const [departureAirport, setDepartureAirport] = useState<Airport | null>(null);
+  const [arrivalAirport, setArrivalAirport] = useState<Airport | null>(null);
+  const [flightClass, setFlightClass] = useState<'economy' | 'premium' | 'business' | 'first'>('economy');
+  const [distance, setDistance] = useState<number | null>(null);
+  const [emissions, setEmissions] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadAirports = async () => {
+      setLoading(true);
+      const data = await fetchAirports();
+      setAirports(data);
+      setLoading(false);
+    };
+    loadAirports();
+  }, []);
+
+  useEffect(() => {
+    if (departureAirport && arrivalAirport) {
+      const dist = calculateDistance(departureAirport, arrivalAirport);
+      setDistance(dist);
+      const emis = calculateFlightEmissions(dist, flightClass);
+      setEmissions(emis);
+    } else {
+      setDistance(null);
+      setEmissions(null);
+    }
+  }, [departureAirport, arrivalAirport, flightClass]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!departureAirport || !arrivalAirport || !emissions || !distance) {
+      alert("Please select both airports");
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:3000/transport/saveflight', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          departure: departureAirport.iata,
+          arrival: arrivalAirport.iata,
+          distance: distance,
+          flightClass: flightClass,
+          emissions: emissions,
+          date: new Date().toISOString().split('T')[0]
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save flight');
+      }
+
+      // Reload page to update today's total
+      window.location.reload();
+    } catch (error) {
+      console.error('Error saving flight:', error);
+      alert('Flight calculated but failed to save. Please try again.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-gray-50 p-6 rounded-lg text-black">
+        <p className="text-gray-600">Loading airport data...</p>
+      </div>
+    );
+  }
+
   return (
-    <form className="bg-gray-50 p-4 rounded-lg text-black">
-      <h3 className="text-xl font-semibold mb-4 text-black">Add Flight</h3>
-      <input type="number" placeholder="Distance (km)" className="text-black" />
-      <select className="text-black">
-        <option>Economy</option>
-        <option>Business</option>
-        <option>First Class</option>
-      </select>
-      <button type="submit">Calculate</button>
+    <form onSubmit={handleSubmit} className="bg-gray-50 p-6 rounded-lg text-black">
+      <h3 className="text-xl font-semibold mb-4 text-black">Add Flight Journey</h3>
+      
+      <div className="space-y-4 mb-4">
+        <AirportSearch
+          airports={airports}
+          onSelect={setDepartureAirport}
+          selectedAirport={departureAirport}
+          placeholder="Search departure airport..."
+          label="From"
+        />
+        
+        <AirportSearch
+          airports={airports}
+          onSelect={setArrivalAirport}
+          selectedAirport={arrivalAirport}
+          placeholder="Search arrival airport..."
+          label="To"
+        />
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Flight Class
+          </label>
+          <select
+            value={flightClass}
+            onChange={(e) => setFlightClass(e.target.value as any)}
+            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+          >
+            <option value="economy">Economy</option>
+            <option value="premium">Premium Economy</option>
+            <option value="business">Business</option>
+            <option value="first">First Class</option>
+          </select>
+        </div>
+      </div>
+
+      {distance && emissions && (
+        <div className="bg-blue-50 p-4 rounded-lg mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-gray-700">Distance:</span>
+            <span className="font-semibold text-gray-900">{distance.toFixed(0)} km</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700">Estimated Emissions:</span>
+            <span className="font-bold text-green-600">{emissions.toFixed(2)} kg CO₂e</span>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            {distance >= 3700 ? 'Long-haul' : 'Short-haul'} flight
+          </p>
+        </div>
+      )}
+
+      <button 
+        type="submit" 
+        disabled={!departureAirport || !arrivalAirport}
+        className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+          departureAirport && arrivalAirport
+            ? 'bg-green-500 text-white hover:bg-green-600'
+            : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+        }`}
+      >
+        Save Flight Emissions
+      </button>
     </form>
   );
 };

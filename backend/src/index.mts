@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.mjs';
 import mealRoutes from './routes/foodRoute.mjs';
 import carRoutes from './routes/carRotues.mjs';
+import flightRoutes from './routes/flightRoutes.mjs';
 dotenv.config();
 
 const app = express(); 
@@ -34,6 +35,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use('/auth', authRoutes);
 app.use('/food', mealRoutes);
 app.use('/transport', carRoutes);
+app.use('/transport', flightRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 API running on http://localhost:${PORT}`)

@@ -65,7 +65,7 @@ export const LandingPage = () => {
             style={{ backgroundColor: "rgba(16, 25, 53, 0.8)" }}
           >
               <h1 className="text-3xl text-white pb-2 font-extrabold text-center">
-                Welcome to <h1 className="text-3xl text-green-600 text-center">GREENSTEPS</h1>
+                Welcome to <span className="text-3xl text-green-600">GREENSTEPS</span>
               </h1>
             <img src={GreenStepsLogo} alt="GreenSteps logo" className="w-sm pb-2" />
               <p className="text-white font-bold text-xl text-center pb-8">

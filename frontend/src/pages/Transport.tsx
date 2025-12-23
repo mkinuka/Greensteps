@@ -19,6 +19,17 @@ interface Journey {
   createdAt: string;
 }
 
+interface Flight {
+  _id: string;
+  departure: string;
+  arrival: string;
+  distance: number;
+  flightClass: string;
+  emissions: number;
+  date: string;
+  createdAt: string;
+}
+
 type TransportType = "Car" | "Train" | "Flight";
 
 export const Transport = () => {
@@ -27,6 +38,7 @@ export const Transport = () => {
   const [myCars, setMyCars] = useState<Car[]>([]);
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [todayJourneys, setTodayJourneys] = useState<Journey[]>([]);
+  const [todayFlights, setTodayFlights] = useState<Flight[]>([]);
 
   useEffect(() => {
     fetchMyCars();
@@ -46,12 +58,24 @@ export const Transport = () => {
 
   const fetchTodayEmissions = async () => {
     try {
-      const response = await fetch('http://localhost:3000/transport/todayjourneys', 
+      // Fetch car journeys
+      const journeysResponse = await fetch('http://localhost:3000/transport/todayjourneys', 
       { credentials: 'include' });
-      const data = await response.json();
-      const total = data.reduce((sum: number, journey: any) => sum + journey.emissions, 0);
-      setTotalEmissions(total);
-      setTodayJourneys(data);
+      const journeysData = await journeysResponse.json();
+      const journeysArray = Array.isArray(journeysData) ? journeysData : [];
+      setTodayJourneys(journeysArray);
+      
+      // Fetch flights
+      const flightsResponse = await fetch('http://localhost:3000/transport/todayflights', 
+      { credentials: 'include' });
+      const flightsData = await flightsResponse.json();
+      const flightsArray = Array.isArray(flightsData.flights) ? flightsData.flights : [];
+      setTodayFlights(flightsArray);
+
+      // Calculate total emissions
+      const carEmissions = journeysArray.reduce((sum: number, journey: any) => sum + journey.emissions, 0);
+      const flightEmissions = flightsArray.reduce((sum: number, flight: any) => sum + flight.emissions, 0);
+      setTotalEmissions(carEmissions + flightEmissions);
     } catch (error) {
       console.error('Failed to fetch today\'s emissions:', error);
     }
@@ -166,7 +190,29 @@ export const Transport = () => {
               <Plane size={24} color="#059669" />
               Today's Flight Transportation
             </h3>
-            <p className="text-gray-600 ml-8">No flights recorded today.</p>
+            {todayFlights.length === 0 ? (
+              <p className="text-gray-600 ml-8">No flights recorded today.</p>
+            ) : (
+              <div className="space-y-3 ml-8">
+                {todayFlights.map((flight) => (
+                  <div key={flight._id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold text-gray-800">{flight.departure} → {flight.arrival}</p>
+                        <p className="text-sm text-gray-600">
+                          {flight.flightClass.charAt(0).toUpperCase() + flight.flightClass.slice(1)} Class - 
+                          Distance: {flight.distance.toFixed(0)} km
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-green-600">{flight.emissions.toFixed(2)}</p>
+                        <p className="text-xs text-gray-500">kg CO₂e</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </div>

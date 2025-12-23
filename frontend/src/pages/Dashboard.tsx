@@ -23,7 +23,14 @@ export const DashBoard = () => {
       const foodData = await foodResponse.json();
       const foodEmissions = foodData.totalEmissions || 0;
 
-      const total = transportEmissions + foodEmissions;
+      const flightResponse = await fetch('http://localhost:3000/transport/todayflights', 
+        { credentials: 'include' });
+      const flightData = await flightResponse.json();
+      const flightEmissions = flightData.totalEmissions || 0;
+
+      const total = transportEmissions + foodEmissions + flightEmissions;
+      console.log(totalEmissions)
+
       setTotalEmissions(total);
       setLoading(false);
     } catch (error) {
