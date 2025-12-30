@@ -1,19 +1,16 @@
 import { NavLink } from "react-router-dom";
+import { Settings } from "lucide-react";
 import GreenStepsLogo from "../assets/GreenSteps.png";
 import { UserBadge } from "./UserBadge";
 
 export const Navigation = () => {
   const mainLinks = [
     { to: "/app/dashboard", label: "Dashboard" },
+    { to: "/app/about", label: "About" },
     { to: "/app/food", label: "Food" },
     { to: "/app/transport", label: "Transport" },
     { to: "/app/shopping", label: "Shopping" },
     { to: "/app/electricity", label: "Electricity" },
-  ];
-
-  const bottomLinks = [
-    { to: "/app/about", label: "About" },
-    { to: "/app/settings", label: "Settings" },
   ];
 
   return (
@@ -29,8 +26,8 @@ export const Navigation = () => {
               to={link.to}
               className={({ isActive }) =>
                 isActive
-                  ? "text-white text-2xl font-semibold bg-blue-900 p-2 rounded-lg transition-all duration-300 ease-in-out"
-                  : "text-white text-2xl p-2 hover:text-white-200 hover:bg-blue-600 rounded-lg transition-all duration-300 ease-in-out"
+                  ? "text-white text-2xl font-semibold bg-blue-900 p-2 rounded-lg transition-all duration-300 ease-in-out slide-bg-animation slide-bg-blue-900"
+                  : "text-white text-2xl p-2 hover:text-white-200 rounded-lg transition-all duration-300 ease-in-out slide-bg-animation slide-bg-blue-600"
               }
             >
               {link.label}
@@ -41,21 +38,14 @@ export const Navigation = () => {
 
       <div className="mt-auto">
         <div className="bg-white h-[3px] rounded-full mx-1  mb-4"></div>
-        {bottomLinks.map((link) => (
-          <li key={link.to} className="list-none mb-2">
-            <NavLink
-              to={link.to}
-              className={({ isActive }) =>
-                isActive
-                  ? "text-white font-semibold underline rounded-lg transition-all duration-300 ease-in-out"
-                  : "text-white hover:text-gray-300 rounded-lg transition-all duration-300 ease-in-out"
-              }
-            >
-              {link.label}
-            </NavLink>
-          </li>
-        ))}
-        <UserBadge></UserBadge>
+
+        {/* User Badge and Settings */}
+        <div className="flex items-center gap-3 mt-4">
+          <UserBadge />
+          <button className="p-2 rounded-lg bg-gray-700 transition-colors duration-200 slide-bg-animation slide-bg-gray-700 hover:text-white">
+            <Settings size={34} color="white" />
+          </button>
+        </div>
       </div>
     </nav>
   );

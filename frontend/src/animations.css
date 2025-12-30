@@ -1,0 +1,55 @@
+/* Left-to-right background animation */
+.slide-bg-animation {
+  position: relative;
+  overflow: hidden;
+  transition: color 1s ease;
+}
+
+.slide-bg-animation::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  transition: width 1s ease;
+  z-index: -1;
+  border-radius: inherit;
+}
+
+.slide-bg-animation:hover::before {
+  width: 100%;
+}
+
+/* Instagram gradient animation */
+.slide-bg-instagram::before {
+  background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);
+}
+
+/* LinkedIn animation */
+.slide-bg-linkedin::before {
+  background-color: #0077b5;
+}
+
+/* Twitter animation */
+.slide-bg-twitter::before {
+  background-color: #1da1f2;
+}
+
+/* Facebook animation */
+.slide-bg-facebook::before {
+  background-color: #1877f2;
+}
+
+/* Navigation links - blue colors */
+.slide-bg-blue-600::before {
+  background-color: #2563eb;
+}
+
+.slide-bg-blue-900::before {
+  background-color: #1e3a8a;
+}
+
+.slide-bg-gray-700::before {
+  background-color: #374151;
+}

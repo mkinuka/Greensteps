@@ -1,21 +1,23 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
-import { GoogleOAuthProvider } from '@react-oauth/google'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import "./animations.css";
+import App from "./App.tsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
+const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
-fetch("http://localhost:3000/auth/google"), {
-  method: "POST",
-  headers: {"content-type" : "application/json"},
-  body:JSON.stringify({ token: Credential})
-}
+fetch("http://localhost:3000/auth/google"),
+  {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ token: Credential }),
+  };
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={CLIENT_ID}>
-    <App />
+      <App />
     </GoogleOAuthProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);
