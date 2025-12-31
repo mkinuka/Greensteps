@@ -13,22 +13,18 @@ interface Meal {
 }
 
 export const Food = () => {
-  // Calculator state
   const [selectedMealType, setSelectedMealType] = useState<MealType | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedFood, setSelectedFood] = useState("");
   const [quantity, setQuantity] = useState("");
 
-  // Today's meals
   const [todaysMeals, setTodaysMeals] = useState<Meal[]>([]);
   const [totalEmissions, setTotalEmissions] = useState(0);
 
-  // Get available food items for selected category
   const availableFoods = selectedCategory
     ? FOOD_DATA.find((cat) => cat.name === selectedCategory)?.items || []
     : [];
 
-  // Fetch today's meals from backend
   useEffect(() => {
     fetchTodaysMeals();
   }, []);
@@ -38,7 +34,7 @@ export const Food = () => {
       const response = await fetch('http://localhost:3000/food/todaysmeals', { credentials: 'include' });
       const data = await response.json();
       setTodaysMeals(data.meals);
-      setTotalEmissions(data.totalEmissions);  // Backend already calculated this
+      setTotalEmissions(data.totalEmissions);
     } catch (error) {
       console.error('Failed to fetch meals:', error);
     }
@@ -46,7 +42,6 @@ export const Food = () => {
 
   const selectMealType = (mealType: MealType) => {
     setSelectedMealType(mealType);
-    // Reset calculator when changing meal type
     setSelectedCategory("");
     setSelectedFood("");
     setQuantity("");
@@ -55,7 +50,6 @@ export const Food = () => {
   const handleAddMeal = async () => {
     if (!selectedFood || !quantity || !selectedMealType) return;
 
-    // Find the food item and calculate emissions
     const foodItem = availableFoods.find((f) => f.name === selectedFood);
     if (!foodItem) return;
 
@@ -83,10 +77,8 @@ export const Food = () => {
 
       console.log('Meal saved successfully!');
 
-      // Refresh the meals list
       await fetchTodaysMeals();
       
-      // Reset calculator
       setSelectedMealType(null);
       setSelectedCategory("");
       setSelectedFood("");

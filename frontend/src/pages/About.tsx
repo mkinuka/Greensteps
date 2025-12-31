@@ -1,16 +1,16 @@
-// import GreenStepsLogo from "../assets/GreenSteps.png";
+import GreenStepsLogo from "../assets/GreenSteps-removebg-preview.png";
 import animate1 from "../assets/animate1.png";
 import animate2 from "../assets/animate2.png";
 
 export const About = () => {
   return (
     <>
-      <div className="mr-10vw ml-10vw mt-2vh p-8 rounded-lg">
-        <section className="flex items-center gap-8">
-          {/* <img src={GreenStepsLogo} alt="logo" className="rounded-4xl"></img> */}
-          <div className="bg-green-200 p-6 rounded-tl-[55px] rounded-tr-lg rounded-bl-lg rounded-br-[55px] border border-green-200">
+      <div className="mr-[10vw] ml-[10vw] mt-[2vh] p-8 rounded-lg max-[1200px]:mr-[2vw] max-[1200px]:ml-[2vw]">
+        <section className="flex items-center gap-8 max-[1200px]:flex-col">
+          <img src={GreenStepsLogo} alt="logo" className="rounded-4xl"></img>
+          <div className=" backdrop-blur-lg bg-white/10 shadow-xl p-6 rounded-tl-[55px] rounded-tr-lg rounded-bl-lg rounded-br-[55px]">
             <h3 className="text-black text-5xl font-bold">About Greensteps</h3>
-            <p className="text-black text-xl font-semibold mb-4">
+            <p className="text-black text-xl font-semibold mb-4 md:text-base">
               GreenSteps is a daily carbon footprint tracker designed to make
               climate impact visible, understandable, and actionable. Our goal
               is to help individuals better understand how everyday choices
@@ -34,8 +34,13 @@ export const About = () => {
         </section>
 
         {/* section two */}
-        <section className="flex items-center gap-8 my-20">
-          <div className="flex-1 bg-green-100 p-6 rounded-tl-lg rounded-tr-[55px] rounded-bl-[55px] rounded-br-lg border">
+        <section className="flex items-center gap-8 my-20 max-[1200px]:flex-col">
+            <img
+              className="h-96 w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg min-[1200px]:hidden  "
+              src={animate2}
+              alt="mascot"
+            />
+          <div className=" backdrop-blur-lg bg-green-800/10 shadow-xl flex-1 p-6 rounded-tl-lg rounded-tr-[55px] rounded-bl-[55px] rounded-br-lg">
             <h3 className="text-black text-5xl font-bold mb-4">
               Data & Transparency
             </h3>
@@ -55,7 +60,7 @@ export const About = () => {
           </div>
           <div className="flex-shrink-0">
             <img
-              className="h-96 w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg"
+              className="h-96 w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg max-[1200px]:hidden  "
               src={animate2}
               alt="mascot"
             />
@@ -63,13 +68,13 @@ export const About = () => {
         </section>
 
         {/* Section three */}
-        <section className="flex items-center gap-8 my-20 mb-0">
+        <section className="flex items-center gap-8 my-20 mb-0 max-[1200px]:flex-col">
           <img
             className="h-96 w-auto mr-6 rounded-tr-[40px] rounded-tl-4 rounded-bl-lg rounded-br-lg"
             src={animate1}
             alt="mascot"
           />
-          <div className="bg-green-400 p-6 rounded-tr-[55px] rounded-tl-lg rounded-bl-3xl rounded-br-[55px]">
+          <div className="backdrop-blur-lg bg-green-400/10 shadow-xl p-6 rounded-tr-[55px] rounded-tl-lg rounded-bl-3xl rounded-br-[55px]">
             <h3 className="text-black text-5xl font-bold">Our Mission</h3>
             <p className="text-black text-lg">
               The climate challenge is no longer a distant problem — it is

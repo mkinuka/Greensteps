@@ -42,10 +42,10 @@ export const router = createBrowserRouter([
         path: "/app/shopping",
         element: <Shopping />,
       },
-      {
-        path: "/app/electricity",
-        element: <Electricity />,
-      },
+      // {
+      //   path: "/app/electricity",
+      //   element: <Electricity />,
+      // },
     ],
   },
 ]);
