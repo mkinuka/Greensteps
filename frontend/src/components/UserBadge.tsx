@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { LogOut } from "lucide-react";
+import { Modal } from "./Modal";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: string;
@@ -10,6 +12,8 @@ interface User {
 
 export const UserBadge = () => {
   const [user, setUser] = useState<User | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean | null>(false)
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,29 +34,51 @@ export const UserBadge = () => {
 
   if (!user) return <div>Loading...</div>;
 
-  // Truncate name if longer than 15 characters
   const truncateName = (name: string, maxLength: number = 15) => {
     if (name.length <= maxLength) return name;
     return name.substring(0, maxLength) + '...';
   };
 
+const userLogOut = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/auth/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+
+    if (response.ok) {
+      setIsOpen(false);
+      navigate('/');
+    } else {
+      console.error('Failed to logout');
+    }
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+}
+
   return (
+    <>
     <div className="flex items-center justify-between gap-3 bg-gray-800 p-3 rounded-full hover:bg-gray-700 transition-colors max-[1200px]:p-2 w-64 max-[1200px]:w-52">
       <img className="rounded-full w-10 h-10 max-[1200px]:w-8 max-[1200px]:h-8" src={user.picture} alt={user.name} />
       <div className="flex-1 min-w-0">
         <h3 
           className="text-white font-bold text-sm max-[1200px]:text-xs truncate" 
           title={user.name}
-        >
+          >
           {truncateName(user.name)}
         </h3>
         <p className="text-gray-400 text-xs max-[1200px]:text-[10px] truncate" title={user.email}>
-          {user.email}
+          {truncateName(user.email)}
         </p>
       </div>
-      <button className="p-2 rounded-lg bg-gray-700 transition-colors duration-200 hover:bg-gray-600 max-[1200px]:p-1.5 flex-shrink-0">
+      <button onClick={() => setIsOpen(true)} className="p-2 rounded-lg bg-gray-700 transition-colors duration-200 hover:bg-gray-600 max-[1200px]:p-1.5 flex-shrink-0">
         <LogOut size={20} color="white" className="max-[1200px]:w-4 max-[1200px]:h-4" />
       </button>
-    </div>
+      </div>
+      {isOpen && (
+        <Modal logout={userLogOut} closeModal={() => setIsOpen(false)}></Modal>
+      )}
+    </>
   );
 };

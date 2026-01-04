@@ -5,7 +5,7 @@ import { authenticateUser } from "../middelware/authentication.mjs";
 const router = express.Router();
 
 router.get('/todaysmeals',authenticateUser, getTodaysMeals);
-router.delete('/deletemeals',authenticateUser, deleteMeal);
+router.delete('/deletemeals:id',authenticateUser, deleteMeal);
 router.post('/uploadmeals', authenticateUser, uploadMeal)
 
 export default router;

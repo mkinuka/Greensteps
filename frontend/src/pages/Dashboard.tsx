@@ -44,8 +44,14 @@ export const DashBoard = () => {
       const trainData = await trainResponse.json();
       const trainEmissions = trainData.totalEmissions || 0;
 
+      const shoppingResponse = await fetch(
+        "http://localhost:3000/shopping/todaysshopping", {credentials:"include"}
+      );
+      const shoppingdata = await shoppingResponse.json()
+      const shoppingEmissions = shoppingdata.totalEmissions || 0;
+
       const total =
-        transportEmissions + foodEmissions + flightEmissions + trainEmissions;
+        transportEmissions + foodEmissions + flightEmissions + trainEmissions + shoppingEmissions;
 
       setTotalEmissions(total);
       setLoading(false);
@@ -83,7 +89,7 @@ export const DashBoard = () => {
               <p className="text-gray-600">All categories combined</p>
             </div>
             <div className="flex items-center gap-4">
-              <Leaf size={48} color="#059669" />
+              {/* <Leaf size={48} color="#059669" /> */}
               <div className="text-right">
                 {loading ? (
                   <p className="text-3xl font-bold text-gray-400">Loading...</p>

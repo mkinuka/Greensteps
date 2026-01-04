@@ -1,9 +1,17 @@
-import type { FoodCategory } from "../types/FoodTypes";
+interface FoodItem {
+  name: string;
+  kgCO2ePerKg: number;
+}
+
+ export interface FoodCategory {
+  name: string;
+  items: FoodItem[];
+}
+
 
 export const FOOD_DATA: FoodCategory[] = [
   {
     name: "Meat",
-    emoji: "🥩",
     items: [
       { name: "Beef (beef herd)", kgCO2ePerKg: 99.48 },
       { name: "Beef (dairy herd)", kgCO2ePerKg: 33.3 },
@@ -14,7 +22,6 @@ export const FOOD_DATA: FoodCategory[] = [
   },
   {
     name: "Dairy",
-    emoji: "🥛",
     items: [
       { name: "Milk", kgCO2ePerKg: 3.2 },
       { name: "Cheese", kgCO2ePerKg: 23.88 },
@@ -23,7 +30,6 @@ export const FOOD_DATA: FoodCategory[] = [
   },
   {
     name: "Seafood",
-    emoji: "🐟",
     items: [
       { name: "Fish (farmed)", kgCO2ePerKg: 13.63 },
       { name: "Prawns (farmed)", kgCO2ePerKg: 26.87 },
@@ -31,7 +37,6 @@ export const FOOD_DATA: FoodCategory[] = [
   },
   {
     name: "Grains & Staples",
-    emoji: "🌾",
     items: [
       { name: "Wheat & Rye", kgCO2ePerKg: 1.57 },
       { name: "Rice", kgCO2ePerKg: 4.45 },
@@ -44,7 +49,6 @@ export const FOOD_DATA: FoodCategory[] = [
   },
   {
     name: "Plant-Based",
-    emoji: "🥬",
     items: [
       { name: "Tofu", kgCO2ePerKg: 3.16 },
       { name: "Soy milk", kgCO2ePerKg: 0.98 },

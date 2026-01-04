@@ -9,7 +9,7 @@ import mealRoutes from "./routes/foodRoute.mjs";
 import carRoutes from "./routes/carRotues.mjs";
 import flightRoutes from "./routes/flightRoutes.mjs";
 import trainRoutes from "./routes/trainRoutes.mjs";
-
+import shoppingRoutes from "./routes/shoppingRoutes.mjs"
 dotenv.config();
 
 const app = express();
@@ -42,6 +42,7 @@ app.use("/food", mealRoutes);
 app.use("/transport", carRoutes);
 app.use("/transport", flightRoutes);
 app.use("/transport", trainRoutes);
+app.use("/shopping", shoppingRoutes )
 app.listen(PORT, () => {
   console.log(`🚀 API running on http://localhost:${PORT}`);
 });

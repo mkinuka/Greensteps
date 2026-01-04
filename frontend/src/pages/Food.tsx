@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import { FOOD_DATA } from "../data/FoodData";
+import eatingman from "../assets/eatingman.png"
+import { Popcorn, Hamburger, Sandwich, Pizza  } from "lucide-react";
+import "../animations.css"
 
 type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
@@ -20,14 +23,15 @@ export const Food = () => {
 
   const [todaysMeals, setTodaysMeals] = useState<Meal[]>([]);
   const [totalEmissions, setTotalEmissions] = useState(0);
+  
+  useEffect(() => {
+    fetchTodaysMeals();
+  }, []);
 
   const availableFoods = selectedCategory
     ? FOOD_DATA.find((cat) => cat.name === selectedCategory)?.items || []
     : [];
 
-  useEffect(() => {
-    fetchTodaysMeals();
-  }, []);
 
   const fetchTodaysMeals = async () => {
     try {
@@ -91,10 +95,19 @@ export const Food = () => {
 
   return (
     <div className="mr-10vw ml-10vw mt-2vh">
-      <h1 className="text-black font-semibold text-4xl mb-8">Daily Food Tracker</h1>
+      <h1 className="text-black font-bold text-4xl mb-8">Daily Food Tracker</h1>
       
       {/* Today's Summary */}
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+      <div style={{background:"#FAF0E6"}} className="rounded-lg shadow-lg p-6 mb-6">
+          <div className="mb-2 flex max-[1000px]:flex-col max-[1000px]:items-center min-[1001px]:justify-center min-[1001px]:items-center gap-4">
+          <img src={eatingman} alt="mascot riding bus" className="h-96 min-[2000px]:h-[550px] w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg"/>
+          <h4 className="max-[1000px]:hidden text-gray-700 text-lg min-[2000px]:text-2xl leading-relaxed font-semibold max-w-xl min-[2000px]:max-w-3xl text-center bg-green-200 p-12 min-[2000px]:p-16 rounded-full shadow-sm">
+            Track your daily food carbon footprint with ease. Whether you're having breakfast, lunch, 
+            dinner, or a snack, we help you understand the environmental impact of your meals. 
+            Simply select your meal type below, enter what you ate and the quantity, and we'll calculate the CO₂ emissions for you. 
+            Every conscious food choice contributes to a healthier planet!
+          </h4>
+          </div>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-semibold text-gray-800">Today's Food Emissions</h2>
           <div className="text-right">
@@ -104,50 +117,34 @@ export const Food = () => {
         </div>
 
         {/* Meal Type Buttons */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
           <button
             onClick={() => selectMealType("Breakfast")}
-            className={`p-4 border-2 rounded-lg transition-all ${
-              selectedMealType === "Breakfast"
-                ? "bg-yellow-100 border-yellow-400"
-                : "bg-yellow-50 hover:bg-yellow-100 border-yellow-200"
-            }`}
+            className="transport-button"
           >
-            <div className="text-3xl mb-1">🍳</div>
-            <div className="text-sm font-medium text-gray-700">Add Breakfast</div>
+            <div className="flex justify-center mb-1"><Sandwich color="currentColor" /></div>
+            <div className="text-sm font-medium">Add Breakfast</div>
           </button>
           <button
             onClick={() => selectMealType("Lunch")}
-            className={`p-4 border-2 rounded-lg transition-all ${
-              selectedMealType === "Lunch"
-                ? "bg-orange-100 border-orange-400"
-                : "bg-orange-50 hover:bg-orange-100 border-orange-200"
-            }`}
+            className="transport-button"
           >
-            <div className="text-3xl mb-1">🍱</div>
-            <div className="text-sm font-medium text-gray-700">Add Lunch</div>
+            <div className="flex justify-center mb-1"><Hamburger color="currentColor" /></div>
+            <div className="text-sm font-medium">Add Lunch</div>
           </button>
           <button
             onClick={() => selectMealType("Dinner")}
-            className={`p-4 border-2 rounded-lg transition-all ${
-              selectedMealType === "Dinner"
-                ? "bg-purple-100 border-purple-400"
-                : "bg-purple-50 hover:bg-purple-100 border-purple-200"
-            }`}
+            className="transport-button"
           >
-            <div className="text-3xl mb-1">🍽️</div>
-            <div className="text-sm font-medium text-gray-700">Add Dinner</div>
+            <div className="flex justify-center mb-1"><Pizza color="currentColor" /></div>
+            <div className="text-sm font-medium">Add Dinner</div>
           </button>
           <button
             onClick={() => selectMealType("Snack")}
-            className={`p-4 border-2 rounded-lg transition-all ${
-              selectedMealType === "Snack"
-                ? "bg-pink-100 border-pink-400"
-                : "bg-pink-50 hover:bg-pink-100 border-pink-200"
-            }`}
+            className="transport-button"
           >
-            <div className="text-3xl mb-1">🍿</div>
-            <div className="text-sm font-medium text-gray-700">Add Snack</div>
+            <div className="flex justify-center mb-1"><Popcorn color="currentColor" /></div>
+            <div className="text-sm font-medium">Add Snack</div>
           </button>
         </div>
 
@@ -183,7 +180,6 @@ export const Food = () => {
                         : "border-gray-200 hover:border-green-300"
                     }`}
                   >
-                    <div className="text-3xl mb-1">{category.emoji}</div>
                     <div className="text-sm font-medium text-gray-700">{category.name}</div>
                   </button>
                 ))}
