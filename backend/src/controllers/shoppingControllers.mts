@@ -2,24 +2,36 @@ import type { Request, Response } from "express";
 import mongoose from "mongoose";
 import { Item } from "../models/shopping.mjs";
 
-//function for getting todays purchased products from database
-export const getTodaysShopping = async (req: Request, res: Response) => {
+export const getShoppingByDate = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
       return res.status(400).json({ error: "user not authenticated." });
     }
 
-    const today = new Date().toISOString().split("T")[0]!;
+    // Hämta datum från query parameter, fallback till idag om inget datum anges
+    const { date } = req.query;
+    const targetDate: string =
+      typeof date === "string" && date.length > 0
+        ? date
+        : new Date().toISOString().split("T")[0]!;
+
+    // Validera att datumet har rätt format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(targetDate)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid date format. Use YYYY-MM-DD" });
+    }
 
     const items = await Item.find({
       userId: new mongoose.Types.ObjectId(userId),
-      date: today,
+      date: targetDate,
     }).sort({ createdAt: -1 });
 
     const totalEmissions = items.reduce((sum, item) => sum + item.emissions, 0);
 
-    res.status(200).json({ items, totalEmissions, date: today });
+    res.status(200).json({ items, totalEmissions, date: targetDate });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch purchased products" });
   }

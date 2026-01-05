@@ -2,7 +2,7 @@ import {
   uploadCar,
   fetchCars,
   saveJourney,
-  fetchTodayJourneys,
+  fetchJourneysByDate,
   deleteCars,
   deleteJourney,
 } from "../controllers/createCarscontroller.mjs";
@@ -15,7 +15,7 @@ router.delete("/deletcars:id", authenticateUser, deleteCars);
 router.post("/uploadcars", authenticateUser, uploadCar);
 router.get("/fetchcars", authenticateUser, fetchCars);
 router.post("/savejourney", authenticateUser, saveJourney);
-router.get("/todayjourneys", authenticateUser, fetchTodayJourneys);
+router.get("/journeysbydate", authenticateUser, fetchJourneysByDate);
 router.delete("/deletejourney:id", authenticateUser, deleteJourney);
 
 export default router;

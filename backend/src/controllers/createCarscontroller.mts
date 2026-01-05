@@ -75,21 +75,40 @@ export const saveJourney = async (req: Request, res: Response) => {
   }
 };
 
-export const fetchTodayJourneys = async (req: Request, res: Response) => {
+// Ny endpoint som tar emot datum som query parameter
+export const fetchJourneysByDate = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
       return res.status(400).json({ error: "user not authenticated." });
     }
 
-    const today = new Date().toISOString().split("T")[0] as string;
+    // Hämta datum från query parameter, fallback till idag om inget datum anges
+    const { date } = req.query;
+    let targetDate: string;
+
+    if (typeof date === "string" && date.trim().length > 0) {
+      targetDate = date.trim();
+    } else {
+      targetDate = new Date().toISOString().split("T")[0]!;
+    }
+
+    // Validera att datumet har rätt format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(targetDate)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid date format. Use YYYY-MM-DD" });
+    }
+
     const journeys = await CarJourney.find({
       userId: new mongoose.Types.ObjectId(userId),
-      date: today,
+      date: targetDate,
     }).populate("carId");
+
     res.status(200).json(journeys);
   } catch (error) {
-    console.error("Error fetching journeys:", error);
+    console.error("Error fetching journeys by date:", error);
     res.status(500).json({ message: "Failed to fetch journeys" });
   }
 };

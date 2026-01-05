@@ -67,7 +67,8 @@ export const deleteFlight = async (
   }
 };
 
-export const fetchTodayFlights = async (
+// Endpoint som tar emot datum som query parameter
+export const fetchFlightsByDate = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -79,12 +80,25 @@ export const fetchTodayFlights = async (
       return;
     }
 
-    const today = new Date().toISOString().split("T")[0]!;
-    const flights = await Flight.find({ userId, date: today }).sort({
+    // Hämta datum från query parameter, fallback till idag om inget datum anges
+    const { date } = req.query;
+    const targetDate: string =
+      typeof date === "string" && date.trim().length > 0
+        ? date.trim()
+        : new Date().toISOString().split("T")[0]!;
+
+    // Validera att datumet har rätt format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(targetDate)) {
+      res.status(400).json({ error: "Invalid date format. Use YYYY-MM-DD" });
+      return;
+    }
+
+    const flights = await Flight.find({ userId, date: targetDate }).sort({
       createdAt: -1,
     });
 
-    // Calculate total emissions for today
+    // Calculate total emissions for the specified date
     const totalEmissions = flights.reduce(
       (sum, flight) => sum + (flight.emissions || 0),
       0
@@ -92,7 +106,7 @@ export const fetchTodayFlights = async (
 
     res.json({ flights, totalEmissions });
   } catch (error) {
-    console.error("Error fetching today's flights:", error);
+    console.error("Error fetching flights by date:", error);
     res.status(500).json({ error: "Failed to fetch flights" });
   }
 };

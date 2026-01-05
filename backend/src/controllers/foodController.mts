@@ -2,24 +2,39 @@ import type { Request, Response } from "express";
 import { Meal } from "../models/meals.mjs";
 import mongoose from "mongoose";
 
-//function for getting todays meals from database
-export const getTodaysMeals = async (req: Request, res: Response) => {
+//function for getting meals from database by date
+export const getMealsByDate = async (req: Request, res: Response) => {
   try {
     const userId = req.user?.id;
     if (!userId) {
       return res.status(400).json({ error: "user not authenticated." });
     }
 
-    const today = new Date().toISOString().split("T")[0]!;
+    const { date } = req.query;
+    let targetDate: string;
+
+    if (typeof date === "string" && date.trim().length > 0) {
+      targetDate = date.trim();
+    } else {
+      targetDate = new Date().toISOString().split("T")[0]!;
+    }
+
+    // Validera att datumet har rätt format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(targetDate)) {
+      return res
+        .status(400)
+        .json({ error: "Invalid date format. Use YYYY-MM-DD" });
+    }
 
     const meals = await Meal.find({
       userId: new mongoose.Types.ObjectId(userId),
-      date: today,
+      date: targetDate,
     }).sort({ createdAt: -1 });
 
     const totalEmissions = meals.reduce((sum, meal) => sum + meal.emissions, 0);
 
-    res.status(200).json({ meals, totalEmissions, date: today });
+    res.status(200).json({ meals, totalEmissions, date: targetDate });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch meals" });
   }

@@ -79,6 +79,50 @@ export const fetchTodayTrains = async (
   }
 };
 
+// Ny endpoint som tar emot datum som query parameter
+export const fetchTrainsByDate = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = (req as any).user?.id;
+
+    if (!userId) {
+      res.status(401).json({ error: "User not authenticated" });
+      return;
+    }
+
+    // Hämta datum från query parameter, fallback till idag om inget datum anges
+    const { date } = req.query;
+    const targetDate: string =
+      typeof date === "string" && date.length > 0
+        ? date
+        : new Date().toISOString().split("T")[0]!;
+
+    // Validera att datumet har rätt format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(targetDate)) {
+      res.status(400).json({ error: "Invalid date format. Use YYYY-MM-DD" });
+      return;
+    }
+
+    const trains = await Train.find({ userId, date: targetDate }).sort({
+      createdAt: -1,
+    });
+
+    // Calculate total emissions for the specified date
+    const totalEmissions = trains.reduce(
+      (sum, train) => sum + (train.emissions || 0),
+      0
+    );
+
+    res.json({ trains, totalEmissions });
+  } catch (error) {
+    console.error("Error fetching trains by date:", error);
+    res.status(500).json({ error: "Failed to fetch trains" });
+  }
+};
+
 export const fetchAllTrains = async (
   req: Request,
   res: Response

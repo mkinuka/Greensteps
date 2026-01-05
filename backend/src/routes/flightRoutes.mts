@@ -1,6 +1,6 @@
 import {
   saveFlight,
-  fetchTodayFlights,
+  fetchFlightsByDate,
   fetchAllFlights,
   deleteFlight,
 } from "../controllers/flightController.mjs";
@@ -9,7 +9,7 @@ import express from "express";
 const router = express.Router();
 
 router.post("/saveflight", authenticateUser, saveFlight);
-router.get("/todayflights", authenticateUser, fetchTodayFlights);
+router.get("/flightsbydate", authenticateUser, fetchFlightsByDate);
 router.get("/allflights", authenticateUser, fetchAllFlights);
 router.delete("/flights/:id", authenticateUser, deleteFlight);
 
