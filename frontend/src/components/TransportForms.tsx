@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AddCarForm from "../components/AddCarForm";
 import AirportSearch from "./AirportSearch";
+import { useDate } from "../contexts/DateContext";
 import type { Airport } from "../utils/airportData";
 import {
   fetchAirports,
@@ -23,6 +24,7 @@ interface CarFormProps {
 }
 
 export const CarForm = ({ selectedCar, myCars, onSelectCar }: CarFormProps) => {
+  const { selectedDate } = useDate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [distance, setDistance] = useState<number>(0);
   const [calculatedEmissions, setCalculatedEmissions] = useState<number | null>(
@@ -80,7 +82,7 @@ export const CarForm = ({ selectedCar, myCars, onSelectCar }: CarFormProps) => {
             carId: selectedCar._id,
             distance,
             emissions,
-            date: new Date().toISOString().split("T")[0],
+            date: selectedDate, // Use selected date from context
           }),
         }
       );
@@ -223,6 +225,7 @@ interface Itrain {
 }
 
 export const TrainForm = () => {
+  const { selectedDate } = useDate();
   const [formData, setFormData] = useState<{
     name: string;
     distance: number;
@@ -277,7 +280,7 @@ export const TrainForm = () => {
     const trainData: Itrain = {
       ...formData,
       emissions,
-      date: new Date().toISOString().split("T")[0],
+      date: selectedDate, // Use selected date from context
     };
 
     try {
@@ -381,6 +384,7 @@ export const TrainForm = () => {
 };
 
 export const FlightForm = () => {
+  const { selectedDate } = useDate();
   const [airports, setAirports] = useState<Airport[]>([]);
   const [departureAirport, setDepartureAirport] = useState<Airport | null>(
     null
@@ -436,7 +440,7 @@ export const FlightForm = () => {
             distance: distance,
             flightClass: flightClass,
             emissions: emissions,
-            date: new Date().toISOString().split("T")[0],
+            date: selectedDate, // Use selected date from context
           }),
         }
       );

@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { FOOD_DATA } from "../data/FoodData";
-import eatingman from "../assets/eatingman.png"
-import { Popcorn, Hamburger, Sandwich, Pizza  } from "lucide-react";
-import "../animations.css"
+import eatingman from "../assets/eatingman.png";
+import { Popcorn, Hamburger, Sandwich, Pizza } from "lucide-react";
+import { useDate } from "../contexts/DateContext";
+import "../animations.css";
 
 type MealType = "Breakfast" | "Lunch" | "Dinner" | "Snack";
 
 interface Meal {
-  id: string;
+  _id: string;
   mealType: MealType;
   foodName: string;
   quantity: number;
@@ -16,31 +17,38 @@ interface Meal {
 }
 
 export const Food = () => {
-  const [selectedMealType, setSelectedMealType] = useState<MealType | null>(null);
+  const { selectedDate, formatDateForDisplay } = useDate();
+  const [selectedMealType, setSelectedMealType] = useState<MealType | null>(
+    null
+  );
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedFood, setSelectedFood] = useState("");
   const [quantity, setQuantity] = useState("");
 
   const [todaysMeals, setTodaysMeals] = useState<Meal[]>([]);
   const [totalEmissions, setTotalEmissions] = useState(0);
-  
+
   useEffect(() => {
-    fetchTodaysMeals();
-  }, []);
+    fetchMealsForDate();
+  }, [selectedDate]);
 
   const availableFoods = selectedCategory
     ? FOOD_DATA.find((cat) => cat.name === selectedCategory)?.items || []
     : [];
 
-
-  const fetchTodaysMeals = async () => {
+  const fetchMealsForDate = async () => {
     try {
-      const response = await fetch('http://localhost:3000/food/todaysmeals', { credentials: 'include' });
+      const response = await fetch(
+        `http://localhost:3000/food/mealsbydate?date=${selectedDate}`,
+        {
+          credentials: "include",
+        }
+      );
       const data = await response.json();
       setTodaysMeals(data.meals);
       setTotalEmissions(data.totalEmissions);
     } catch (error) {
-      console.error('Failed to fetch meals:', error);
+      console.error("Failed to fetch meals:", error);
     }
   };
 
@@ -57,61 +65,77 @@ export const Food = () => {
     const foodItem = availableFoods.find((f) => f.name === selectedFood);
     if (!foodItem) return;
 
-    const emissions = foodItem.kgCO2ePerKg * parseFloat(quantity);
+    const emissions = foodItem.kgCO2ePerKg * (parseFloat(quantity) / 1000);
 
     const mealData = {
       mealType: selectedMealType,
       foodName: selectedFood,
       quantity: parseFloat(quantity),
       emissions,
-      date: new Date().toISOString().split('T')[0],
+      date: selectedDate, // Use the selected date from context
     };
 
     try {
-      const response = await fetch('http://localhost:3000/food/uploadmeals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(mealData)
+      const response = await fetch("http://localhost:3000/food/uploadmeals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(mealData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save meal');
+        throw new Error("Failed to save meal");
       }
 
-      console.log('Meal saved successfully!');
+      console.log("Meal saved successfully!");
 
-      await fetchTodaysMeals();
-      
+      await fetchMealsForDate(); // Updated function name
+
       setSelectedMealType(null);
       setSelectedCategory("");
       setSelectedFood("");
       setQuantity("");
     } catch (error) {
-      console.error('Failed to save meal:', error);
-      alert('Failed to save meal. Please try again.');
+      console.error("Failed to save meal:", error);
+      alert("Failed to save meal. Please try again.");
     }
   };
 
   return (
     <div className="mr-10vw ml-10vw mt-2vh">
-      <h1 className="text-black font-bold text-4xl mb-8">Daily Food Tracker</h1>
-      
+      <h1 className="text-black font-bold text-4xl">Daily Food Tracker</h1>
+      <h2 className="text-gray-600 text-xl font-bold mt-2">
+        Current selected date:
+        {formatDateForDisplay(selectedDate)}
+      </h2>
       {/* Today's Summary */}
-      <div style={{background:"#FAF0E6"}} className="rounded-lg shadow-lg p-6 mb-6">
-          <div className="mb-2 flex max-[1000px]:flex-col max-[1000px]:items-center min-[1001px]:justify-center min-[1001px]:items-center gap-4">
-          <img src={eatingman} alt="mascot riding bus" className="h-96 min-[2000px]:h-[550px] w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg"/>
+      <div
+        style={{ background: "#FAF0E6" }}
+        className="rounded-lg shadow-lg p-6 mb-6"
+      >
+        <div className="mb-2 flex max-[1000px]:flex-col max-[1000px]:items-center min-[1001px]:justify-center min-[1001px]:items-center gap-4">
+          <img
+            src={eatingman}
+            alt="mascot riding bus"
+            className="h-96 min-[2000px]:h-[550px] w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg"
+          />
           <h4 className="max-[1000px]:hidden text-gray-700 text-lg min-[2000px]:text-2xl leading-relaxed font-semibold max-w-xl min-[2000px]:max-w-3xl text-center bg-green-200 p-12 min-[2000px]:p-16 rounded-full shadow-sm">
-            Track your daily food carbon footprint with ease. Whether you're having breakfast, lunch, 
-            dinner, or a snack, we help you understand the environmental impact of your meals. 
-            Simply select your meal type below, enter what you ate and the quantity, and we'll calculate the CO₂ emissions for you. 
-            Every conscious food choice contributes to a healthier planet!
+            Track your daily food carbon footprint with ease. Whether you're
+            having breakfast, lunch, dinner, or a snack, we help you understand
+            the environmental impact of your meals. Simply select your meal type
+            below, enter what you ate and the quantity, and we'll calculate the
+            CO₂ emissions for you. Every conscious food choice contributes to a
+            healthier planet!
           </h4>
-          </div>
+        </div>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-semibold text-gray-800">Today's Food Emissions</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Today's Food Emissions
+          </h2>
           <div className="text-right">
-            <p className="text-4xl font-bold text-green-600">{totalEmissions.toFixed(2)}</p>
+            <p className="text-4xl font-bold text-green-600">
+              {totalEmissions.toFixed(2)}
+            </p>
             <p className="text-gray-600">kg CO₂e</p>
           </div>
         </div>
@@ -120,30 +144,46 @@ export const Food = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
           <button
             onClick={() => selectMealType("Breakfast")}
-            className="transport-button"
+            className={`transport-button ${
+              selectedMealType === "Breakfast" ? "active" : ""
+            }`}
           >
-            <div className="flex justify-center mb-1"><Sandwich color="currentColor" /></div>
+            <div className="flex justify-center mb-1">
+              <Sandwich color="currentColor" />
+            </div>
             <div className="text-sm font-medium">Add Breakfast</div>
           </button>
           <button
             onClick={() => selectMealType("Lunch")}
-            className="transport-button"
+            className={`transport-button ${
+              selectedMealType === "Lunch" ? "active" : ""
+            }`}
           >
-            <div className="flex justify-center mb-1"><Hamburger color="currentColor" /></div>
+            <div className="flex justify-center mb-1">
+              <Hamburger color="currentColor" />
+            </div>
             <div className="text-sm font-medium">Add Lunch</div>
           </button>
           <button
             onClick={() => selectMealType("Dinner")}
-            className="transport-button"
+            className={`transport-button ${
+              selectedMealType === "Dinner" ? "active" : ""
+            }`}
           >
-            <div className="flex justify-center mb-1"><Pizza color="currentColor" /></div>
+            <div className="flex justify-center mb-1">
+              <Pizza color="currentColor" />
+            </div>
             <div className="text-sm font-medium">Add Dinner</div>
           </button>
           <button
             onClick={() => selectMealType("Snack")}
-            className="transport-button"
+            className={`transport-button ${
+              selectedMealType === "Snack" ? "active" : ""
+            }`}
           >
-            <div className="flex justify-center mb-1"><Popcorn color="currentColor" /></div>
+            <div className="flex justify-center mb-1">
+              <Popcorn color="currentColor" />
+            </div>
             <div className="text-sm font-medium">Add Snack</div>
           </button>
         </div>
@@ -152,7 +192,9 @@ export const Food = () => {
         {selectedMealType && (
           <div className="border-t pt-6 mt-6">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-gray-800">Add {selectedMealType}</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Add {selectedMealType}
+              </h3>
               <button
                 onClick={() => setSelectedMealType(null)}
                 className="text-gray-500 hover:text-gray-700 text-sm"
@@ -180,7 +222,9 @@ export const Food = () => {
                         : "border-gray-200 hover:border-green-300"
                     }`}
                   >
-                    <div className="text-sm font-medium text-gray-700">{category.name}</div>
+                    <div className="text-sm font-medium text-gray-700">
+                      {category.name}
+                    </div>
                   </button>
                 ))}
               </div>
@@ -211,14 +255,14 @@ export const Food = () => {
             {selectedFood && (
               <div className="mb-6">
                 <label className="block text-gray-700 font-medium mb-2">
-                  Step 3: Enter Quantity (kg)
+                  Step 3: Enter Quantity (g)
                 </label>
                 <input
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  placeholder="e.g., 0.5"
-                  step="0.01"
+                  placeholder="e.g., 250"
+                  step="1"
                   min="0"
                   className="w-full px-4 py-2 border border-gray-300 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
@@ -231,26 +275,41 @@ export const Food = () => {
               disabled={!selectedFood || !quantity}
               className="w-full bg-green-600 text-white font-semibold py-3 rounded-lg hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
             >
-              Add to Today's Meals
+              Add Meal for {selectedDate}
             </button>
           </div>
         )}
 
-        {/* Today's Meals List */}
+        {/* Meals List for Selected Date */}
         <div className={selectedMealType ? "border-t pt-6 mt-6" : ""}>
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Today's Meals</h3>
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">
+            {formatDateForDisplay(selectedDate)} Meals
+          </h3>
           {todaysMeals.length === 0 ? (
-            <p className="text-gray-500 text-center py-8">No meals logged yet. Add your first meal above!</p>
+            <p className="text-gray-500 text-center py-8">
+              No meals logged for {selectedDate}. Add your first meal above!
+            </p>
           ) : (
             <div className="space-y-2">
               {todaysMeals.map((meal) => (
-                <div key={meal.id} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <div
+                  key={meal._id}
+                  className="flex justify-between items-center p-3 bg-gray-50 rounded-lg"
+                >
                   <div>
-                    <span className="font-medium text-gray-800">{meal.mealType}</span>
-                    <span className="text-gray-600 ml-2">• {meal.foodName}</span>
-                    <span className="text-gray-500 text-sm ml-2">({meal.quantity} kg)</span>
+                    <span className="font-medium text-gray-800">
+                      {meal.mealType}
+                    </span>
+                    <span className="text-gray-600 ml-2">
+                      • {meal.foodName}
+                    </span>
+                    <span className="text-gray-500 text-sm ml-2">
+                      ({meal.quantity} g)
+                    </span>
                   </div>
-                  <div className="text-green-600 font-semibold">{meal.emissions.toFixed(2)} kg CO₂e</div>
+                  <div className="text-green-600 font-semibold">
+                    {meal.emissions.toFixed(2)} kg CO₂e
+                  </div>
                 </div>
               ))}
             </div>

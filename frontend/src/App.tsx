@@ -1,13 +1,14 @@
-import { RouterProvider } from 'react-router-dom'
-import './App.css'
-import { router } from './Router'
+import { RouterProvider } from "react-router-dom";
+import "./App.css";
+import { router } from "./Router";
+import { DateProvider } from "./contexts/DateContext";
 
 function App() {
   return (
-    <>
-    <RouterProvider router={router}></RouterProvider>
-    </>
-  )
+    <DateProvider>
+      <RouterProvider router={router}></RouterProvider>
+    </DateProvider>
+  );
 }
 
-export default App
+export default App;

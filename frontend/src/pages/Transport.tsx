@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { CarFront, Plane, TrainFront, Trash2 } from "lucide-react";
 import { CarForm, FlightForm, TrainForm } from "../components/TransportForms";
 import type { Car, Journey, Flight, Itrain } from "../types/transportTypes";
-import busrideimg from "../assets/busride.png"
-import "../animations.css"
+import { useDate } from "../contexts/DateContext";
+import busrideimg from "../assets/busride.png";
+import "../animations.css";
 
 type TransportType = "Car" | "Train" | "Flight";
 
 export const Transport = () => {
+  const { selectedDate, formatDateForDisplay } = useDate();
   const [selectedTransportType, setSelectedTransportType] =
     useState<TransportType | null>(null);
   const [totalEmissions, setTotalEmissions] = useState(0);
@@ -20,7 +22,7 @@ export const Transport = () => {
   useEffect(() => {
     fetchMyCars();
     fetchTodayEmissions();
-  }, []);
+  }, [selectedDate]); // Add selectedDate as dependency
 
   const fetchMyCars = async () => {
     try {
@@ -39,7 +41,7 @@ export const Transport = () => {
     try {
       // Fetch car journeys
       const journeysResponse = await fetch(
-        "http://localhost:3000/transport/todayjourneys",
+        `http://localhost:3000/transport/journeysbydate?date=${selectedDate}`,
         { credentials: "include" }
       );
       const journeysData = await journeysResponse.json();
@@ -48,7 +50,7 @@ export const Transport = () => {
 
       // Fetch flights
       const flightsResponse = await fetch(
-        "http://localhost:3000/transport/todayflights",
+        `http://localhost:3000/transport/flightsbydate?date=${selectedDate}`,
         { credentials: "include" }
       );
       const flightsData = await flightsResponse.json();
@@ -59,7 +61,7 @@ export const Transport = () => {
 
       // Train emissions
       const trainResponse = await fetch(
-        "http://localhost:3000/transport/todaytrains",
+        `http://localhost:3000/transport/trainsbydate?date=${selectedDate}`,
         { credentials: "include" }
       );
       const trainsData = await trainResponse.json();
@@ -83,7 +85,7 @@ export const Transport = () => {
       );
       setTotalEmissions(carEmissions + flightEmissions + trainEmissions);
     } catch (error) {
-      console.error("Failed to fetch today's emissions:", error);
+      console.error("Failed to fetch transport emissions:", error);
     }
   };
 
@@ -123,17 +125,31 @@ export const Transport = () => {
   return (
     <>
       <div className="mr-10vw ml-10vw mt-2vh">
-        <h1 className="text-black font-bold text-4xl mb-8">Transport</h1>
-        <section style={{background:"#FAF0E6"}} className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <h1 className="text-black font-bold text-4xl">Transport</h1>
+        <h2 className="text-gray-600 text-xl mt-2 font-bold">
+          Current selected date:
+          {formatDateForDisplay(selectedDate)}
+        </h2>
+        <section
+          style={{ background: "#FAF0E6" }}
+          className="bg-white rounded-lg shadow-lg p-6 mb-6"
+        >
           {/* Todays emissions */}
           <div className="mb-2 flex max-[1000px]:flex-col max-[1000px]:items-center min-[1001px]:justify-center min-[1001px]:items-center gap-4">
-          <img src={busrideimg} alt="mascot riding bus" className="h-96 min-[2000px]:h-[550px] w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg"/>
-          <h4 className="max-[1000px]:hidden text-gray-700 text-lg min-[2000px]:text-2xl leading-relaxed font-semibold max-w-xl min-[2000px]:max-w-3xl text-center bg-green-200 p-12 min-[2000px]:p-16 rounded-full shadow-sm">
-            Track your daily transportation carbon footprint with ease. Whether you're commuting by car, taking the train, 
-            catching a flight, or riding the bus, we help you monitor and understand the environmental impact of your journeys. 
-            Simply select your mode of transport below, enter your trip details, and we'll calculate the CO₂ emissions for you. 
-            Every small step toward sustainable travel counts!
-          </h4>
+            <img
+              src={busrideimg}
+              alt="mascot riding bus"
+              className="h-96 min-[2000px]:h-[550px] w-auto rounded-tr-lg rounded-tl-[40px] rounded-bl-lg rounded-br-lg"
+            />
+            <h4 className="max-[1000px]:hidden text-gray-700 text-lg min-[2000px]:text-2xl leading-relaxed font-semibold max-w-xl min-[2000px]:max-w-3xl text-center bg-green-200 p-12 min-[2000px]:p-16 rounded-full shadow-sm">
+              Track your daily transportation carbon footprint with ease.
+              Whether you're commuting by car, taking the train, catching a
+              flight, or riding the bus, we help you monitor and understand the
+              environmental impact of your journeys. Simply select your mode of
+              transport below, enter your trip details, and we'll calculate the
+              CO₂ emissions for you. Every small step toward sustainable travel
+              counts!
+            </h4>
           </div>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-semibold text-gray-800">
@@ -151,38 +167,38 @@ export const Transport = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
             <button
               onClick={() => selectTransportType("Car")}
-              className="transport-button"
+              className={`transport-button ${
+                selectedTransportType === "Car" ? "active" : ""
+              }`}
             >
               <div className="text-3xl mb-1 flex justify-center">
                 {<CarFront color="currentColor" />}
               </div>
-              <div className="text-sm font-medium">
-                Add Car Emissions
-              </div>
+              <div className="text-sm font-medium">Add Car Emissions</div>
             </button>
 
             <button
               onClick={() => selectTransportType("Train")}
-              className="transport-button"
+              className={`transport-button ${
+                selectedTransportType === "Train" ? "active" : ""
+              }`}
             >
               <div className="text-3xl mb-1 flex justify-center">
                 {<TrainFront color="currentColor" />}
               </div>
-              <div className="text-sm font-medium">
-                Add Train Emissions
-              </div>
+              <div className="text-sm font-medium">Add Train Emissions</div>
             </button>
 
             <button
               onClick={() => selectTransportType("Flight")}
-              className="transport-button"
+              className={`transport-button ${
+                selectedTransportType === "Flight" ? "active" : ""
+              }`}
             >
               <div className="text-3xl mb-1 flex justify-center">
                 {<Plane color="currentColor" />}
               </div>
-              <div className="text-sm font-medium">
-                Add Flight Emissions
-              </div>
+              <div className="text-sm font-medium">Add Flight Emissions</div>
             </button>
           </div>
 
@@ -196,7 +212,7 @@ export const Transport = () => {
           {selectedTransportType === "Train" && <TrainForm />}
           {selectedTransportType === "Flight" && <FlightForm />}
 
-        {/* Today's Trips */}
+          {/* Today's Trips */}
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">
             Today's Trips
           </h2>

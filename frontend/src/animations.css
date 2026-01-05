@@ -78,11 +78,15 @@
   transition: all 0.6s cubic-bezier(0.23, 1, 0.320, 1);
 }
 
-.transport-button:hover::before {
+.transport-button:hover::before,
+.transport-button:active::before,
+.transport-button.active::before {
   scale: 1;
 }
 
-.transport-button:hover {
+.transport-button:hover,
+.transport-button:active,
+.transport-button.active {
   color: white;
   scale: 1.1;
   box-shadow: 0 0px 20px rgba(42, 88, 73, 0.4);
