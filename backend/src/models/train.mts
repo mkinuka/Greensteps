@@ -2,7 +2,8 @@ import mongoose, { Schema, Document } from "mongoose";
 
 interface ITrain extends Document {
   userId: string;
-  name: string;
+  departure: string;
+  arrival: string;
   distance: number;
   category: "tram" | "national" | "underground";
   emissions: number;
@@ -17,7 +18,11 @@ const trainSchema = new Schema<ITrain>(
       type: String,
       required: true,
     },
-    name: {
+    departure: {
+      type: String,
+      required: true,
+    },
+    arrival: {
       type: String,
       required: true,
     },

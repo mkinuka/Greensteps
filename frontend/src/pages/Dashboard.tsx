@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import {
-  Leaf,
   Car,
   Pizza,
   TrainFront,
@@ -8,6 +7,7 @@ import {
   ShoppingBag,
   ChevronLeft,
   ChevronRight,
+  BusFront,
 } from "lucide-react";
 import { useDate } from "../contexts/DateContext";
 
@@ -19,6 +19,7 @@ export const DashBoard = () => {
     food: 0,
     flights: 0,
     trains: 0,
+    buses: 0,
     shopping: 0,
   });
   const [userName, setUserName] = useState("");
@@ -71,11 +72,19 @@ export const DashBoard = () => {
       const shoppingdata = await shoppingResponse.json();
       const shoppingEmissions = shoppingdata.totalEmissions || 0;
 
+      const busResponse = await fetch(
+        `http://localhost:3000/transport/busesbydate?date=${date}`,
+        { credentials: "include" }
+      );
+      const busData = await busResponse.json();
+      const busEmissions = busData.totalEmissions || 0;
+
       const total =
         transportEmissions +
         foodEmissions +
         flightEmissions +
         trainEmissions +
+        busEmissions +
         shoppingEmissions;
 
       setTotalEmissions(total);
@@ -84,6 +93,7 @@ export const DashBoard = () => {
         food: foodEmissions,
         flights: flightEmissions,
         trains: trainEmissions,
+        buses: busEmissions,
         shopping: shoppingEmissions,
       });
       setLoading(false);
@@ -130,14 +140,14 @@ export const DashBoard = () => {
         <h1 className="text-black font-semibold text-4xl mb-2">Dashboard</h1>
         <p className="text-gray-600 text-xl mb-8">Welcome, {userName}!</p>
 
-        {/* Global Date Selector */}
+        {/* Global date selector */}
         <section className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between max-[1200px]:flex-col">
+            <div className="flex items-center gap-4 max-[500px]:flex-col">
               <h2 className="text-xl font-semibold text-gray-800">
                 Select Date
               </h2>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 max-[1200px]:mb-2">
                 <button
                   onClick={() => changeDate(-1)}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -178,7 +188,7 @@ export const DashBoard = () => {
         </section>
 
         <section className="bg-white rounded-lg shadow-lg p-8 mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between max-[1200px]:flex-col">
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
                 {formatDateForDisplay(selectedDate)} Total Emissions
@@ -189,8 +199,7 @@ export const DashBoard = () => {
             </div>
 
             <div className="flex items-center gap-4">
-              {/* <Leaf size={48} color="#059669" /> */}
-              <div className="text-right">
+              <div className="text-right max-[1200px]:flex max-[1200px]:gap-2 max-[1200px]:mt-2">
                 {loading ? (
                   <p className="text-3xl font-bold text-gray-400">Loading...</p>
                 ) : (
@@ -247,6 +256,14 @@ export const DashBoard = () => {
                   </span>
                   <span className="text-green-600 font-semibold">
                     {categoryEmissions.trains.toFixed(2)} kg CO₂e
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-700 font-medium flex gap-2">
+                    <BusFront></BusFront> Buses
+                  </span>
+                  <span className="text-green-600 font-semibold">
+                    {categoryEmissions.buses.toFixed(2)} kg CO₂e
                   </span>
                 </div>
                 <div className="flex justify-between items-center">

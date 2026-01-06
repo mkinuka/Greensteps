@@ -1,5 +1,12 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Info, Carrot, Car, ShoppingBag } from "lucide-react";
+import {
+  LayoutDashboard,
+  Info,
+  Carrot,
+  Car,
+  ShoppingBag,
+  Settings,
+} from "lucide-react";
 import GreenStepsLogo from "../assets/GreenSteps.png";
 
 export const Navigation = () => {
@@ -11,6 +18,12 @@ export const Navigation = () => {
     { to: "/app/shopping", label: "Shopping", icon: ShoppingBag },
     // { to: "/app/electricity", label: "Electricity" },
   ];
+
+  const settingsLink = {
+    to: "/app/settings",
+    label: "Settings",
+    icon: Settings,
+  };
 
   return (
     <nav
@@ -24,7 +37,7 @@ export const Navigation = () => {
       ></img>
       <div className="max-[1200px]:flex max-[1200px]:justify-around max-[1200px]:w-full min-[1200px]:flex-1">
         {mainLinks.map((link) => {
-          // const Icon = link.icon;
+          const Icon = link.icon;
           return (
             <li
               key={link.to}
@@ -34,14 +47,14 @@ export const Navigation = () => {
                 to={link.to}
                 className={({ isActive }) =>
                   isActive
-                    ? "text-white flex max-[1200px]:flex-col max-[1200px]:items-center max-[1200px]:gap-1 max-[1200px]:text-[10px] max-[1200px]:px-3 max-[1200px]:py-2 min-[1200px]:text-2xl font-semibold bg-blue-900 min-[1200px]:p-2 rounded-lg transition-all duration-300 ease-in-out"
-                    : "text-white flex max-[1200px]:flex-col max-[1200px]:items-center max-[1200px]:gap-1 max-[1200px]:text-[10px] max-[1200px]:px-3 max-[1200px]:py-2 min-[1200px]:text-2xl min-[1200px]:p-2 hover:bg-blue-800 rounded-lg transition-all duration-300 ease-in-out"
+                    ? "text-white flex max-[1200px]:flex-col max-[1200px]:items-center max-[1200px]:gap-1 max-[1200px]:text-xs max-[1200px]:px-4 max-[1200px]:py-3 min-[1200px]:text-2xl font-semibold bg-blue-900 min-[1200px]:p-2 rounded-lg transition-all duration-300 ease-in-out"
+                    : "text-white flex max-[1200px]:flex-col max-[1200px]:items-center max-[1200px]:gap-1 max-[1200px]:text-xs max-[1200px]:px-4 max-[1200px]:py-3 min-[1200px]:text-2xl min-[1200px]:p-2 hover:bg-blue-800 rounded-lg transition-all duration-300 ease-in-out"
                 }
               >
-                {/* <Icon
+                <Icon
                   size={20}
                   className="max-[1200px]:block min-[1200px]:hidden"
-                /> */}
+                />
                 {link.label}
               </NavLink>
             </li>
@@ -51,7 +64,19 @@ export const Navigation = () => {
 
       <div className="max-[1200px]:hidden min-[1200px]:mt-auto">
         <div className="bg-white h-[3px] rounded-full mx-1 mb-4"></div>
-        <div className="min-[1200px]:mt-4"></div>
+        <li className="list-none">
+          <NavLink
+            to={settingsLink.to}
+            className={({ isActive }) =>
+              isActive
+                ? "text-white flex min-[1200px]:text-2xl font-semibold bg-blue-900 min-[1200px]:p-2 rounded-lg transition-all duration-300 ease-in-out"
+                : "text-white flex min-[1200px]:text-2xl min-[1200px]:p-2 hover:bg-blue-800 rounded-lg transition-all duration-300 ease-in-out"
+            }
+          >
+            <Settings className="mr-2" size={24} />
+            {settingsLink.label}
+          </NavLink>
+        </li>
       </div>
     </nav>
   );

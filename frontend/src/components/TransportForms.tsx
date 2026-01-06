@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Trash2 } from "lucide-react";
 import AddCarForm from "../components/AddCarForm";
 import AirportSearch from "./AirportSearch";
 import { useDate } from "../contexts/DateContext";
@@ -21,12 +22,19 @@ interface CarFormProps {
   selectedCar: Car | null;
   myCars: Car[];
   onSelectCar: (car: Car) => void;
+  onDeleteCar: (carId: string) => void;
 }
 
-export const CarForm = ({ selectedCar, myCars, onSelectCar }: CarFormProps) => {
+export const CarForm = ({
+  selectedCar,
+  myCars,
+  onSelectCar,
+  onDeleteCar,
+}: CarFormProps) => {
   const { selectedDate } = useDate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [distance, setDistance] = useState<number>(0);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [calculatedEmissions, setCalculatedEmissions] = useState<number | null>(
     null
   );
@@ -44,6 +52,18 @@ export const CarForm = ({ selectedCar, myCars, onSelectCar }: CarFormProps) => {
 
   const handleCancel = () => {
     setIsOpen(false);
+  };
+
+  const handleDeleteCar = async (carId: string, event: React.MouseEvent) => {
+    event.stopPropagation(); // Prevent car selection when clicking delete
+    setDeleteLoading(carId);
+    try {
+      await onDeleteCar(carId);
+    } catch (error) {
+      console.error("Error deleting car:", error);
+    } finally {
+      setDeleteLoading(null);
+    }
   };
 
   const calculateEmissions = async (e: React.FormEvent) => {
@@ -110,39 +130,55 @@ export const CarForm = ({ selectedCar, myCars, onSelectCar }: CarFormProps) => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             {myCars.map((car) => (
-              <button
+              <div
                 key={car._id}
-                onClick={() => onSelectCar(car)}
-                className={`border-2 rounded-lg p-4 text-left transition-all ${
+                className={`relative border-2 rounded-lg p-4 transition-all ${
                   selectedCar?._id === car._id
                     ? "bg-green-100 border-green-500"
                     : "bg-gray-50 border-gray-200 hover:bg-gray-100 hover:border-gray-300"
                 }`}
               >
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">
-                  {car.name}
-                </h3>
-                <div className="space-y-1 text-sm text-gray-600">
-                  <p>
-                    <span className="font-medium">Fuel Type:</span>{" "}
-                    {car.fuelType.charAt(0).toUpperCase() +
-                      car.fuelType.slice(1)}
-                  </p>
-                  <p>
-                    <span className="font-medium">Consumption:</span>{" "}
-                    {car.fuelConsumption}{" "}
-                    {car.fuelType === "electric" ? "kWh/10km" : "L/10km"}
-                  </p>
-                  <p className="text-xs text-gray-400">
-                    Added: {new Date(car.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                {selectedCar?._id === car._id && (
-                  <div className="mt-2 text-xs font-semibold text-green-600">
-                    ✓ Selected
+                <button
+                  onClick={() => onSelectCar(car)}
+                  className="w-full text-left"
+                >
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2 pr-8">
+                    {car.name}
+                  </h3>
+                  <div className="space-y-1 text-sm text-gray-600">
+                    <p>
+                      <span className="font-medium">Fuel Type:</span>{" "}
+                      {car.fuelType.charAt(0).toUpperCase() +
+                        car.fuelType.slice(1)}
+                    </p>
+                    <p>
+                      <span className="font-medium">Consumption:</span>{" "}
+                      {car.fuelConsumption}{" "}
+                      {car.fuelType === "electric" ? "kWh/10km" : "L/10km"}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      Added: {new Date(car.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
-                )}
-              </button>
+                  {selectedCar?._id === car._id && (
+                    <div className="mt-2 text-xs font-semibold text-green-600">
+                      ✓ Selected
+                    </div>
+                  )}
+                </button>
+
+                <button
+                  onClick={(e) => handleDeleteCar(car._id, e)}
+                  disabled={deleteLoading === car._id}
+                  className="absolute top-2 right-2 p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                >
+                  {deleteLoading === car._id ? (
+                    <div className="w-4 h-4 border-2 border-red-500 border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <Trash2 size={16} />
+                  )}
+                </button>
+              </div>
             ))}
           </div>
         )}
@@ -217,7 +253,8 @@ export const CarForm = ({ selectedCar, myCars, onSelectCar }: CarFormProps) => {
 };
 
 interface Itrain {
-  name: string;
+  departure: string;
+  arrival: string;
   distance: number;
   category: "tram" | "national" | "underground";
   emissions: number;
@@ -227,11 +264,13 @@ interface Itrain {
 export const TrainForm = () => {
   const { selectedDate } = useDate();
   const [formData, setFormData] = useState<{
-    name: string;
+    departure: string;
+    arrival: string;
     distance: number;
     category: "tram" | "national" | "underground";
   }>({
-    name: "",
+    departure: "",
+    arrival: "",
     distance: 0,
     category: "national",
   });
@@ -267,7 +306,7 @@ export const TrainForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.distance) {
+    if (!formData.departure || !formData.arrival || !formData.distance) {
       alert("Please fill in all fields");
       return;
     }
@@ -299,7 +338,12 @@ export const TrainForm = () => {
       }
 
       // Reset form and reload page
-      setFormData({ name: "", distance: 0, category: "national" });
+      setFormData({
+        departure: "",
+        arrival: "",
+        distance: 0,
+        category: "national",
+      });
       setCalculatedEmissions(null);
       window.location.reload();
     } catch (error) {
@@ -322,10 +366,20 @@ export const TrainForm = () => {
       <div className="space-y-4 mb-4">
         <input
           type="text"
-          name="name"
-          value={formData.name}
+          name="departure"
+          value={formData.departure}
           onChange={handleInputChange}
-          placeholder="Name your journey (e.g., Home to Work)"
+          placeholder="Departure (e.g., Central Station)"
+          className="w-full p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          required
+        />
+
+        <input
+          type="text"
+          name="arrival"
+          value={formData.arrival}
+          onChange={handleInputChange}
+          placeholder="Arrival (e.g., Main Terminal)"
           className="w-full p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 focus:border-transparent"
           required
         />
@@ -538,6 +592,234 @@ export const FlightForm = () => {
         }`}
       >
         Save Flight Emissions
+      </button>
+    </form>
+  );
+};
+
+interface IBus {
+  departure: string;
+  arrival: string;
+  duration: number; // in minutes
+  timeUnit: "minutes" | "hours";
+  trafficType: "countryside" | "highway" | "city";
+  distance: number; // calculated from duration and speed
+  emissions: number;
+  date: string;
+}
+
+export const BusForm = () => {
+  const { selectedDate } = useDate();
+  const [formData, setFormData] = useState<{
+    departure: string;
+    arrival: string;
+    duration: number;
+    timeUnit: "minutes" | "hours";
+    trafficType: "countryside" | "highway" | "city";
+  }>({
+    departure: "",
+    arrival: "",
+    duration: 0,
+    timeUnit: "minutes",
+    trafficType: "city",
+  });
+  const [calculatedEmissions, setCalculatedEmissions] = useState<number | null>(
+    null
+  );
+  const [calculatedDistance, setCalculatedDistance] = useState<number | null>(
+    null
+  );
+  const [loading, setLoading] = useState(false);
+
+  // Speed and emission factors for different traffic types
+  const speedFactors = {
+    countryside: 40, // km/h
+    highway: 80, // km/h
+    city: 25, // km/h
+  };
+
+  // Bus emission factor (kg CO2e per km) - average for diesel bus
+  const busEmissionFactor = 0.097;
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "duration" ? Number(value) : value,
+    }));
+  };
+
+  const calculateDistance = (
+    duration: number,
+    timeUnit: "minutes" | "hours",
+    trafficType: "countryside" | "highway" | "city"
+  ) => {
+    // Convert duration to hours if needed
+    const durationInHours = timeUnit === "hours" ? duration : duration / 60;
+
+    // Calculate distance based on speed
+    const speed = speedFactors[trafficType];
+    return durationInHours * speed;
+  };
+
+  const calculateEmissions = (distance: number) => {
+    return distance * busEmissionFactor;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.departure || !formData.arrival || !formData.duration) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    setLoading(true);
+
+    const distance = calculateDistance(
+      formData.duration,
+      formData.timeUnit,
+      formData.trafficType
+    );
+    const emissions = calculateEmissions(distance);
+
+    setCalculatedDistance(distance);
+    setCalculatedEmissions(emissions);
+
+    const busData: IBus = {
+      ...formData,
+      distance,
+      emissions,
+      date: selectedDate,
+    };
+
+    try {
+      const response = await fetch("http://localhost:3000/transport/savebus", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(busData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to save bus journey");
+      }
+
+      // Reset form and reload page
+      setFormData({
+        departure: "",
+        arrival: "",
+        duration: 0,
+        timeUnit: "minutes",
+        trafficType: "city",
+      });
+      setCalculatedEmissions(null);
+      setCalculatedDistance(null);
+      window.location.reload();
+    } catch (error) {
+      console.error("Error saving bus journey:", error);
+      alert("Journey calculated but failed to save. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="bg-gray-50 p-4 rounded-lg text-black"
+    >
+      <h3 className="text-xl font-semibold mb-4 text-black">Add Bus Journey</h3>
+
+      <div className="space-y-4 mb-4">
+        <input
+          type="text"
+          name="departure"
+          value={formData.departure}
+          onChange={handleInputChange}
+          placeholder="Departure (e.g., Central Station)"
+          className="w-full p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          required
+        />
+
+        <input
+          type="text"
+          name="arrival"
+          value={formData.arrival}
+          onChange={handleInputChange}
+          placeholder="Arrival (e.g., Shopping Mall)"
+          className="w-full p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          required
+        />
+
+        <div className="flex gap-2">
+          <input
+            type="number"
+            name="duration"
+            value={formData.duration || ""}
+            onChange={handleInputChange}
+            placeholder="Duration"
+            className="flex-1 p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            required
+            min="0"
+            step="1"
+          />
+          <select
+            name="timeUnit"
+            value={formData.timeUnit}
+            onChange={handleInputChange}
+            className="w-24 p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          >
+            <option value="minutes">min</option>
+            <option value="hours">hours</option>
+          </select>
+        </div>
+
+        <select
+          name="trafficType"
+          value={formData.trafficType}
+          onChange={handleInputChange}
+          className="w-full p-2 border border-gray-300 rounded-lg text-black focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        >
+          <option value="city">City Traffic (25 km/h)</option>
+          <option value="countryside">Countryside (40 km/h)</option>
+          <option value="highway">Highway/Freeway (80 km/h)</option>
+        </select>
+      </div>
+
+      {calculatedDistance !== null && calculatedEmissions !== null && (
+        <div className="bg-green-50 p-4 rounded-lg mb-4">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-gray-700">Estimated Distance:</span>
+            <span className="font-bold text-blue-600">
+              {calculatedDistance.toFixed(2)} km
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-700">Estimated Emissions:</span>
+            <span className="font-bold text-green-600">
+              {calculatedEmissions.toFixed(2)} kg CO₂e
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            Based on {formData.trafficType} traffic at{" "}
+            {speedFactors[formData.trafficType]} km/h
+          </p>
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={loading}
+        className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+          loading
+            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+            : "bg-green-500 text-white hover:bg-green-600"
+        }`}
+      >
+        {loading ? "Saving..." : "Calculate & Save Emissions"}
       </button>
     </form>
   );

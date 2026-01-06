@@ -9,7 +9,7 @@ import { authenticateUser } from "../middelware/authentication.mjs";
 const router = express.Router();
 
 router.get("/mealsbydate", authenticateUser, getMealsByDate);
-router.delete("/deletemeals:id", authenticateUser, deleteMeal);
+router.delete("/deletemeals/:id", authenticateUser, deleteMeal);
 router.post("/uploadmeals", authenticateUser, uploadMeal);
 
 export default router;

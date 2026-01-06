@@ -16,11 +16,20 @@ export const saveTrains = async (
     }
 
     console.log("User ID:", userId);
-    const { name, distance, category, emissions, date } = req.body;
+    const { departure, arrival, distance, category, emissions, date } =
+      req.body;
 
-    if (!name || !distance || !category || !emissions || !date) {
+    if (
+      !departure ||
+      !arrival ||
+      !distance ||
+      !category ||
+      !emissions ||
+      !date
+    ) {
       console.log("Missing required fields:", {
-        name,
+        departure,
+        arrival,
         distance,
         category,
         emissions,
@@ -32,7 +41,8 @@ export const saveTrains = async (
 
     const newTrain = new Train({
       userId,
-      name,
+      departure,
+      arrival,
       distance: Number(distance),
       category,
       emissions: Number(emissions),
@@ -140,5 +150,38 @@ export const fetchAllTrains = async (
   } catch (error) {
     console.error("Error fetching trains:", error);
     res.status(500).json({ error: "Failed to fetch trains" });
+  }
+};
+
+export const deleteTrain = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const userId = (req as any).user?.id;
+
+    if (!userId) {
+      res.status(401).json({ error: "User not authenticated" });
+      return;
+    }
+
+    const deletedTrain = await Train.findOneAndDelete({
+      _id: id,
+      userId: userId,
+    });
+
+    if (!deletedTrain) {
+      res.status(404).json({ error: "Train not found" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Train deleted successfully",
+      deletedTrain,
+    });
+  } catch (error) {
+    console.error("Error deleting train:", error);
+    res.status(500).json({ error: "Failed to delete train" });
   }
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ITEM_DATA } from "../data/ShoppingData";
-import { Shirt, Tv, Sofa } from "lucide-react";
+import { Shirt, Tv, Sofa, Trash2 } from "lucide-react";
 import { useDate } from "../contexts/DateContext";
 import shoppingMan from "../assets/shoppingman.png";
 import "../animations.css";
@@ -76,7 +76,7 @@ export const Shopping = () => {
       itemName: selectedItem,
       quantity: parseFloat(quantity),
       emissions,
-      date: selectedDate, // Use selected date from context
+      date: selectedDate,
     };
 
     try {
@@ -335,10 +335,10 @@ export const Shopping = () => {
                         </div>
                         <button
                           onClick={() => handleDeleteItem(item._id)}
-                          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded transition-colors"
+                          className="text-red-500 hover:text-red-700 hover:bg-red-300 p-2 rounded transition-colors"
                           title="Delete item"
                         >
-                          ✕
+                          <Trash2></Trash2>
                         </button>
                       </div>
                     </div>

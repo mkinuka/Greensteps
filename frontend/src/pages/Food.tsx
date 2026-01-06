@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { FOOD_DATA } from "../data/FoodData";
 import eatingman from "../assets/eatingman.png";
-import { Popcorn, Hamburger, Sandwich, Pizza } from "lucide-react";
+import { Popcorn, Hamburger, Sandwich, Pizza, Trash2 } from "lucide-react";
 import { useDate } from "../contexts/DateContext";
 import "../animations.css";
 
@@ -98,6 +98,31 @@ export const Food = () => {
     } catch (error) {
       console.error("Failed to save meal:", error);
       alert("Failed to save meal. Please try again.");
+    }
+  };
+
+  const deleteMeal = async (mealId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/food/deletemeals/${mealId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete meal");
+      }
+
+      setTodaysMeals((prev) => prev.filter((meal) => meal._id !== mealId));
+
+      await fetchMealsForDate();
+
+      console.log("Meal deleted successfully");
+    } catch (error) {
+      console.error("Error deleting meal:", error);
+      alert("Failed to delete meal. Please try again.");
     }
   };
 
@@ -307,8 +332,17 @@ export const Food = () => {
                       ({meal.quantity} g)
                     </span>
                   </div>
-                  <div className="text-green-600 font-semibold">
-                    {meal.emissions.toFixed(2)} kg CO₂e
+                  <div className="flex items-center gap-3">
+                    <div className="text-green-600 font-semibold">
+                      {meal.emissions.toFixed(2)} kg CO₂e
+                    </div>
+                    <button
+                      onClick={() => deleteMeal(meal._id)}
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                      title="Delete meal"
+                    >
+                      <Trash2 size={18} />
+                    </button>
                   </div>
                 </div>
               ))}

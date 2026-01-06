@@ -1,14 +1,14 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const shoppingSchema = new mongoose.Schema({
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: "User",
     required: true,
   },
   itemType: {
     type: String,
-    enum: ['Clothing', 'Electronics', 'Furniture'],
+    enum: ["Clothing", "Electronics", "Furniture", "Material-based-purchases"],
     required: true,
   },
   itemName: {
@@ -35,4 +35,4 @@ const shoppingSchema = new mongoose.Schema({
   },
 });
 
-export const Item = mongoose.model('Item', shoppingSchema);
+export const Item = mongoose.model("Item", shoppingSchema);

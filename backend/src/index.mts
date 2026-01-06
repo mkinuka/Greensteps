@@ -5,11 +5,13 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.mjs";
+import userRoutes from "./routes/userRoutes.mjs";
 import mealRoutes from "./routes/foodRoute.mjs";
 import carRoutes from "./routes/carRotues.mjs";
 import flightRoutes from "./routes/flightRoutes.mjs";
 import trainRoutes from "./routes/trainRoutes.mjs";
-import shoppingRoutes from "./routes/shoppingRoutes.mjs"
+import busRoutes from "./routes/busRoutes.mjs";
+import shoppingRoutes from "./routes/shoppingRoutes.mjs";
 dotenv.config();
 
 const app = express();
@@ -38,11 +40,13 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Greensteps API is running");
 });
 app.use("/auth", authRoutes);
+app.use("/api/user", userRoutes);
 app.use("/food", mealRoutes);
 app.use("/transport", carRoutes);
 app.use("/transport", flightRoutes);
 app.use("/transport", trainRoutes);
-app.use("/shopping", shoppingRoutes )
+app.use("/transport", busRoutes);
+app.use("/shopping", shoppingRoutes);
 app.listen(PORT, () => {
   console.log(`🚀 API running on http://localhost:${PORT}`);
 });

@@ -1,12 +1,23 @@
 import { useState, useEffect } from "react";
-import { CarFront, Plane, TrainFront, Trash2 } from "lucide-react";
-import { CarForm, FlightForm, TrainForm } from "../components/TransportForms";
-import type { Car, Journey, Flight, Itrain } from "../types/transportTypes";
+import { BusFront, CarFront, Plane, TrainFront, Trash2 } from "lucide-react";
+import {
+  BusForm,
+  CarForm,
+  FlightForm,
+  TrainForm,
+} from "../components/TransportForms";
+import type {
+  Car,
+  Journey,
+  Flight,
+  Itrain,
+  Ibus,
+} from "../types/transportTypes";
 import { useDate } from "../contexts/DateContext";
 import busrideimg from "../assets/busride.png";
 import "../animations.css";
 
-type TransportType = "Car" | "Train" | "Flight";
+type TransportType = "Car" | "Train" | "Flight" | "Bus";
 
 export const Transport = () => {
   const { selectedDate, formatDateForDisplay } = useDate();
@@ -18,11 +29,12 @@ export const Transport = () => {
   const [todayJourneys, setTodayJourneys] = useState<Journey[]>([]);
   const [todayFlights, setTodayFlights] = useState<Flight[]>([]);
   const [todayTrains, setTodayTrains] = useState<Itrain[]>([]);
+  const [todayBus, setTodayBus] = useState<Ibus[]>([]);
 
   useEffect(() => {
     fetchMyCars();
     fetchTodayEmissions();
-  }, [selectedDate]); // Add selectedDate as dependency
+  }, [selectedDate]);
 
   const fetchMyCars = async () => {
     try {
@@ -34,6 +46,35 @@ export const Transport = () => {
       setMyCars(data);
     } catch (error) {
       console.error("Failed to fetch cars:", error);
+    }
+  };
+
+  const deleteCar = async (carId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/transport/deletecars/${carId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete car");
+      }
+
+      // Update the state by removing the deleted car
+      setMyCars((prev) => prev.filter((car) => car._id !== carId));
+
+      // If the deleted car was selected, clear selection
+      if (selectedCar?._id === carId) {
+        setSelectedCar(null);
+      }
+
+      console.log("Car deleted successfully");
+    } catch (error) {
+      console.error("Error deleting car:", error);
+      alert("Failed to delete car. Please try again.");
     }
   };
 
@@ -59,7 +100,7 @@ export const Transport = () => {
         : [];
       setTodayFlights(flightsArray);
 
-      // Train emissions
+      // Fetch trains
       const trainResponse = await fetch(
         `http://localhost:3000/transport/trainsbydate?date=${selectedDate}`,
         { credentials: "include" }
@@ -69,6 +110,15 @@ export const Transport = () => {
         ? trainsData.trains
         : [];
       setTodayTrains(trainArray);
+
+      // Fetch buses
+      const busResponse = await fetch(
+        `http://localhost:3000/transport/busesbydate?date=${selectedDate}`,
+        { credentials: "include" }
+      );
+      const busData = await busResponse.json();
+      const busArray = Array.isArray(busData.buses) ? busData.buses : [];
+      setTodayBus(busArray);
 
       // Calculate total emissions
       const carEmissions = journeysArray.reduce(
@@ -83,7 +133,13 @@ export const Transport = () => {
         (sum: number, train: any) => sum + train.emissions,
         0
       );
-      setTotalEmissions(carEmissions + flightEmissions + trainEmissions);
+      const busEmissions = busArray.reduce(
+        (sum: number, bus: any) => sum + bus.emissions,
+        0
+      );
+      setTotalEmissions(
+        carEmissions + flightEmissions + trainEmissions + busEmissions
+      );
     } catch (error) {
       console.error("Failed to fetch transport emissions:", error);
     }
@@ -96,7 +152,7 @@ export const Transport = () => {
   const deleteFlight = async (flightId: string) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/transport/deleteflights/${flightId}`,
+        `http://localhost:3000/transport/flights/${flightId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -119,6 +175,89 @@ export const Transport = () => {
     } catch (error) {
       console.error("Error deleting flight:", error);
       alert("Failed to delete flight. Please try again.");
+    }
+  };
+
+  const deleteJourney = async (journeyId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/transport/deletejourney/${journeyId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete journey");
+      }
+
+      // Update the state by removing the deleted journey
+      setTodayJourneys((prev) =>
+        prev.filter((journey) => journey._id !== journeyId)
+      );
+
+      // Recalculate total emissions
+      fetchTodayEmissions();
+
+      console.log("Journey deleted successfully");
+    } catch (error) {
+      console.error("Error deleting journey:", error);
+      alert("Failed to delete journey. Please try again.");
+    }
+  };
+
+  const deleteTrain = async (trainId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/transport/trains/${trainId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete train");
+      }
+
+      // Update the state by removing the deleted train
+      setTodayTrains((prev) => prev.filter((train) => train._id !== trainId));
+
+      // Recalculate total emissions
+      fetchTodayEmissions();
+
+      console.log("Train deleted successfully");
+    } catch (error) {
+      console.error("Error deleting train:", error);
+      alert("Failed to delete train. Please try again.");
+    }
+  };
+
+  const deleteBus = async (busId: string) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/transport/buses/${busId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete bus");
+      }
+
+      // Update the state by removing the deleted bus
+      setTodayBus((prev) => prev.filter((bus) => bus._id !== busId));
+
+      // Recalculate total emissions
+      fetchTodayEmissions();
+
+      console.log("Bus deleted successfully");
+    } catch (error) {
+      console.error("Error deleting bus:", error);
+      alert("Failed to delete bus. Please try again.");
     }
   };
 
@@ -178,6 +317,18 @@ export const Transport = () => {
             </button>
 
             <button
+              onClick={() => selectTransportType("Bus")}
+              className={`transport-button ${
+                selectedTransportType === "Bus" ? "active" : ""
+              }`}
+            >
+              <div className="text-3xl mb-1 flex justify-center">
+                {<BusFront color="currentColor" />}
+              </div>
+              <div className="text-sm font-medium">Add Bus Emissions</div>
+            </button>
+
+            <button
               onClick={() => selectTransportType("Train")}
               className={`transport-button ${
                 selectedTransportType === "Train" ? "active" : ""
@@ -207,10 +358,12 @@ export const Transport = () => {
               selectedCar={selectedCar}
               myCars={myCars}
               onSelectCar={setSelectedCar}
+              onDeleteCar={deleteCar}
             />
           )}
           {selectedTransportType === "Train" && <TrainForm />}
           {selectedTransportType === "Flight" && <FlightForm />}
+          {selectedTransportType === "Bus" && <BusForm />}
 
           {/* Today's Trips */}
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">
@@ -242,11 +395,69 @@ export const Transport = () => {
                           - Distance: {journey.distance} km
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-green-600">
-                          {journey.emissions.toFixed(2)}
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-green-600">
+                            {journey.emissions.toFixed(2)}
+                          </p>
+                          <p className="text-xs text-gray-500">kg CO₂e</p>
+                        </div>
+                        <button
+                          onClick={() => deleteJourney(journey._id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                          title="Delete journey"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Bus Transportation */}
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-gray-700 mb-3 flex items-center gap-2">
+              <BusFront size={24} color="#059669" />
+              Today's Bus Transportation
+            </h3>
+            {todayBus.length === 0 ? (
+              <p className="text-gray-600 ml-8">No bus trips recorded today.</p>
+            ) : (
+              <div className="space-y-3 ml-8">
+                {todayBus.map((bus) => (
+                  <div
+                    key={bus._id}
+                    className="bg-gray-50 rounded-lg p-4 border border-gray-200"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-semibold text-gray-800">
+                          {bus.departure} → {bus.arrival}
                         </p>
-                        <p className="text-xs text-gray-500">kg CO₂e</p>
+                        <p className="text-sm text-gray-600">
+                          {bus.trafficType.charAt(0).toUpperCase() +
+                            bus.trafficType.slice(1)}{" "}
+                          Traffic - Duration: {bus.duration} {bus.timeUnit} -
+                          Distance: {bus.distance.toFixed(1)} km
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-green-600">
+                            {bus.emissions.toFixed(2)}
+                          </p>
+                          <p className="text-xs text-gray-500">kg CO₂e</p>
+                        </div>
+                        <button
+                          onClick={() => deleteBus(bus._id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                          title="Delete bus trip"
+                        >
+                          <Trash2 size={18} />
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -275,7 +486,7 @@ export const Transport = () => {
                     <div className="flex justify-between items-start">
                       <div>
                         <p className="font-semibold text-gray-800">
-                          {train.name}
+                          {train.departure} → {train.arrival}
                         </p>
                         <p className="text-sm text-gray-600">
                           {train.category.charAt(0).toUpperCase() +
@@ -283,11 +494,20 @@ export const Transport = () => {
                           Class - Distance: {train.distance.toFixed(0)} km
                         </p>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-green-600">
-                          {train.emissions.toFixed(2)}
-                        </p>
-                        <p className="text-xs text-gray-500">kg CO₂e</p>
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <p className="text-lg font-bold text-green-600">
+                            {train.emissions.toFixed(2)}
+                          </p>
+                          <p className="text-xs text-gray-500">kg CO₂e</p>
+                        </div>
+                        <button
+                          onClick={() => deleteTrain(train._id)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-colors"
+                          title="Delete train"
+                        >
+                          <Trash2 size={18} />
+                        </button>
                       </div>
                     </div>
                   </div>

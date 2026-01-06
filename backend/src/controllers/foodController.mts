@@ -80,6 +80,7 @@ export const deleteMeal = async (req: Request, res: Response) => {
       res.status(401).json({ error: "User not authenticated" });
       return;
     }
+
     const deletedMeal = await Meal.findOneAndDelete({
       _id: id,
       userId: userId,
@@ -87,6 +88,7 @@ export const deleteMeal = async (req: Request, res: Response) => {
 
     if (!deletedMeal) {
       res.status(404).json({ error: "Meal not found" });
+      return;
     }
 
     res.status(200).json({ message: "Successfully deleted meal", deletedMeal });

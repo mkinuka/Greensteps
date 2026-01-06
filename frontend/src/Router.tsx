@@ -8,6 +8,7 @@ import { Transport } from "./pages/Transport";
 import { Shopping } from "./pages/Shopping";
 import { Electricity } from "./pages/Electricity";
 import { DashBoard } from "./pages/Dashboard";
+import { Settings } from "./pages/Settings";
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ export const router = createBrowserRouter([
       {
         path: "/app/shopping",
         element: <Shopping />,
+      },
+      {
+        path: "/app/settings",
+        element: <Settings />,
       },
       // {
       //   path: "/app/electricity",
