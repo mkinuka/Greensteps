@@ -355,16 +355,30 @@ export const Food = () => {
         </div>
       </div>
 
-      {/* Info Section */}
-      <div className="bg-blue-50 rounded-lg p-6">
-        <h3 className="font-semibold text-blue-900 mb-2">💡 Did you know?</h3>
-        <ul className="text-gray-700 space-y-2">
-          <li>• Beef produces ~100 kg CO₂e per kg (highest impact)</li>
-          <li>• Plant-based foods typically produce &lt;5 kg CO₂e per kg</li>
-          <li>• Switching from beef to chicken reduces emissions by ~90%</li>
-          <li>• Tofu and legumes have similar emissions to vegetables</li>
+      {/* Did you know section */}
+      <section className="bg-blue-50 rounded-lg shadow-lg p-6 mt-6">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          Did you know? Food
+        </h2>
+        <ul className="space-y-3 text-gray-700">
+          <li className="flex gap-3">
+            <span className="text-green-600 font-bold">•</span>
+            <span>Beef produces ~100 kg CO₂e per kg (highest impact)</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="text-green-600 font-bold">•</span>
+            <span>Plant-based foods typically produce &lt;5 kg CO₂e per kg</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="text-green-600 font-bold">•</span>
+            <span>Switching from beef to chicken reduces emissions by ~90%</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="text-green-600 font-bold">•</span>
+            <span>Tofu and legumes have similar emissions to vegetables</span>
+          </li>
         </ul>
-      </div>
+      </section>
     </div>
   );
 };

@@ -363,11 +363,15 @@ export const Transport = () => {
               myCars={myCars}
               onSelectCar={setSelectedCar}
               onDeleteCar={deleteCar}
+              onSuccess={() => {
+                fetchMyCars();
+                fetchTodayEmissions();
+              }}
             />
           )}
-          {selectedTransportType === "Train" && <TrainForm />}
-          {selectedTransportType === "Flight" && <FlightForm />}
-          {selectedTransportType === "Bus" && <BusForm />}
+          {selectedTransportType === "Train" && <TrainForm onSuccess={fetchTodayEmissions} />}
+          {selectedTransportType === "Flight" && <FlightForm onSuccess={fetchTodayEmissions} />}
+          {selectedTransportType === "Bus" && <BusForm onSuccess={fetchTodayEmissions} />}
 
           {/* Today's Trips */}
           <h2 className="text-2xl font-semibold text-gray-800 mb-6">
@@ -567,6 +571,35 @@ export const Transport = () => {
               </div>
             )}
           </div>
+        </section>
+
+        {/* Did you know section */}
+        <section className="bg-blue-50 rounded-lg shadow-lg p-6 mt-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            Did you know?
+          </h2>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Flying is one of the most carbon intensive ways to travel especially for short distances</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Driving alone usually causes more emissions per person than carpooling or public transport</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Trains are among the lowest emission options for long distance travel in many countries</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Buses often emit far less carbon per passenger than cars when they are well used</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Walking and cycling have almost zero direct carbon emissions and also benefit your health</span>
+            </li>
+          </ul>
         </section>
       </div>
     </>

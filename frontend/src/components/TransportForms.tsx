@@ -23,6 +23,7 @@ interface CarFormProps {
   myCars: Car[];
   onSelectCar: (car: Car) => void;
   onDeleteCar: (carId: string) => void;
+  onSuccess?: () => void;
 }
 
 export const CarForm = ({
@@ -30,6 +31,7 @@ export const CarForm = ({
   myCars,
   onSelectCar,
   onDeleteCar,
+  onSuccess,
 }: CarFormProps) => {
   const { selectedDate } = useDate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -46,8 +48,7 @@ export const CarForm = ({
   const handleCarSubmit = (carData: any) => {
     console.log("Car added:", carData);
     setIsOpen(false);
-    // Reload page or refetch cars in parent component
-    window.location.reload();
+    if (onSuccess) onSuccess();
   };
 
   const handleCancel = () => {
@@ -111,8 +112,10 @@ export const CarForm = ({
         throw new Error("Failed to save journey");
       }
 
-      // Reload page to update today's total
-      window.location.reload();
+      // Update state via callback
+      if (onSuccess) onSuccess();
+      setDistance(0);
+      setCalculatedEmissions(null);
     } catch (error) {
       console.error("Error saving journey:", error);
       alert("Journey calculated but failed to save. Please try again.");
@@ -261,7 +264,7 @@ interface Itrain {
   date: string;
 }
 
-export const TrainForm = () => {
+export const TrainForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const { selectedDate } = useDate();
   const [formData, setFormData] = useState<{
     departure: string;
@@ -337,7 +340,7 @@ export const TrainForm = () => {
         throw new Error("Failed to save train journey");
       }
 
-      // Reset form and reload page
+      // Reset form
       setFormData({
         departure: "",
         arrival: "",
@@ -345,7 +348,7 @@ export const TrainForm = () => {
         category: "national",
       });
       setCalculatedEmissions(null);
-      window.location.reload();
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error saving train journey:", error);
       alert("Journey calculated but failed to save. Please try again.");
@@ -437,7 +440,7 @@ export const TrainForm = () => {
   );
 };
 
-export const FlightForm = () => {
+export const FlightForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const { selectedDate } = useDate();
   const [airports, setAirports] = useState<Airport[]>([]);
   const [departureAirport, setDepartureAirport] = useState<Airport | null>(
@@ -503,8 +506,12 @@ export const FlightForm = () => {
         throw new Error("Failed to save flight");
       }
 
-      // Reload page to update today's total
-      window.location.reload();
+      // Update state via callback
+      setDepartureAirport(null);
+      setArrivalAirport(null);
+      setDistance(null);
+      setEmissions(null);
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error saving flight:", error);
       alert("Flight calculated but failed to save. Please try again.");
@@ -608,7 +615,7 @@ interface IBus {
   date: string;
 }
 
-export const BusForm = () => {
+export const BusForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const { selectedDate } = useDate();
   const [formData, setFormData] = useState<{
     departure: string;
@@ -707,7 +714,7 @@ export const BusForm = () => {
         throw new Error("Failed to save bus journey");
       }
 
-      // Reset form and reload page
+      // Reset form
       setFormData({
         departure: "",
         arrival: "",
@@ -717,7 +724,7 @@ export const BusForm = () => {
       });
       setCalculatedEmissions(null);
       setCalculatedDistance(null);
-      window.location.reload();
+      if (onSuccess) onSuccess();
     } catch (error) {
       console.error("Error saving bus journey:", error);
       alert("Journey calculated but failed to save. Please try again.");

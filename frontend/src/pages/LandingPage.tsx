@@ -69,7 +69,7 @@ export const LandingPage = () => {
               </h1>
             <img src={GreenStepsLogo} alt="GreenSteps logo" className="w-sm pb-2" />
               <p className="text-white font-bold text-xl text-center pb-8">
-                Track your emissions from transport, food, electricity and shopping. Start your journey toward greener habits, one step at a time
+                Track your emissions from transport, food and shopping. Start your journey toward greener habits, one step at a time
               </p>
             <p className="text-white font-extrabold text-s pb-3 text-center">
               Take your First step in the right direction

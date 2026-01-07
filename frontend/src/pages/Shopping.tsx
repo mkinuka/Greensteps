@@ -352,7 +352,34 @@ export const Shopping = () => {
             )}
           </div>
         </section>
-      </div>
+        {/* Did you know section */}
+        <section className="bg-blue-50 rounded-lg shadow-lg p-6 mt-6">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            Did you know?
+          </h2>
+          <ul className="space-y-3 text-gray-700">
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Clothing made from new materials often causes more emissions than clothes made from recycled fibers</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Buying fewer high quality items usually has a lower footprint than buying many cheap ones</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Electronics have most of their climate impact before you even turn them on due to manufacturing</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Second hand shopping can reduce the carbon footprint of an item by more than half</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-green-600 font-bold">•</span>
+              <span>Fast deliveries increase emissions especially when items are shipped by air or delivered individually</span>
+            </li>
+          </ul>
+        </section>      </div>
     </>
   );
 };
