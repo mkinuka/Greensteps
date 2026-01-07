@@ -141,7 +141,7 @@ export const DashBoard = () => {
         <p className="text-gray-600 text-xl mb-8">Welcome, {userName}!</p>
 
         {/* Global date selector */}
-        <section className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <section className="bg-blue-50 rounded-lg shadow-lg p-6 mb-6">
           <div className="flex items-center justify-between max-[1200px]:flex-col">
             <div className="flex items-center gap-4 max-[500px]:flex-col">
               <h2 className="text-xl font-semibold text-gray-800">
@@ -187,7 +187,7 @@ export const DashBoard = () => {
           </div>
         </section>
 
-        <section className="bg-white rounded-lg shadow-lg p-8 mb-6">
+        <section className="bg-purple-50 rounded-lg shadow-lg p-8 mb-6">
           <div className="flex items-center justify-between max-[1200px]:flex-col">
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 mb-2">
@@ -216,11 +216,11 @@ export const DashBoard = () => {
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-teal-50 rounded-lg shadow-lg p-6">
             <h3 className="text-xl font-semibold text-gray-800 mb-4">
               Quick Stats
             </h3>
-            <p className="text-gray-600 mb-4">Today's emissions by category</p>
+            <p className="text-gray-600 mb-4">{selectedDate} emissions by category</p>
 
             {loading ? (
               <p className="text-gray-400">Loading...</p>
@@ -285,13 +285,24 @@ export const DashBoard = () => {
               </div>
             )}
           </div>
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-amber-50 rounded-lg shadow-lg p-6">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Environmental Impact
             </h3>
-            <p className="text-gray-600">
-              See how your choices affect the planet
-            </p>
+            <div className="text-gray-700 bg-green-100 p-4 text-lg font-semibold rounded-2xl space-y-4">
+              <p>
+                To limit the worst effects of climate change, the world needs to reduce average carbon emissions over time. A commonly used climate aligned target is around 2 to 3 kg CO₂e per person per day.
+              </p>
+              <p>
+                Most people today emit more than this and that is okay. This goal is not about being perfect every day. It is a long term direction not a daily test.
+              </p>
+              <p>
+                Some days will be higher due to travel or special events while other days will be lower. What matters most is the overall trend and the choices you make over time.
+              </p>
+              <p>
+                By tracking your emissions you can better understand where your biggest impacts come from and where small changes can make a real difference.
+              </p>
+            </div>
           </div>
         </section>
       </div>

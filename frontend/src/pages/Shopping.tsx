@@ -132,10 +132,14 @@ export const Shopping = () => {
     <>
       <div className="mr-[10vw] ml-[10vw] mt-[2vh] max-[1200px]:mr-[2vw] max-[1200px]:ml-[2vw] ">
         <h1 className="text-black font-bold text-4xl">Shopping</h1>
-        <h2 className="text-gray-600 text-xl font-bold mt-2">
-          Current selected date:
-          {formatDateForDisplay(selectedDate)}
-        </h2>
+         <div className="flex items-center mb-2">
+      <h2 className="text-gray-600 text-xl font-bold mt-2">
+        Selected date: 
+      </h2>
+      <h2 className="text-white text-xl font-bold mt-2 bg-blue-800 ml-2 p-1 rounded-lg">
+        {formatDateForDisplay(selectedDate)}
+      </h2>
+      </div>
         <section
           style={{ background: "#FAF0E6" }}
           className="rounded-lg shadow-lg p-6 mb-6"

@@ -263,12 +263,16 @@ export const Transport = () => {
 
   return (
     <>
-      <div className="mr-10vw ml-10vw mt-2vh">
+      <div className="mr-[10vw] ml-[10vw] mt-2vh max-[1200px]:mr-[2vw] max-[1200px]:ml-[2vw]">
         <h1 className="text-black font-bold text-4xl">Transport</h1>
-        <h2 className="text-gray-600 text-xl mt-2 font-bold">
-          Current selected date:
-          {formatDateForDisplay(selectedDate)}
-        </h2>
+         <div className="flex items-center mb-2">
+      <h2 className="text-gray-600 text-xl font-bold mt-2">
+        Current selected date: 
+      </h2>
+      <h2 className="text-white text-xl font-bold mt-2 bg-blue-800 ml-2 p-1 rounded-lg">
+        {formatDateForDisplay(selectedDate)}
+      </h2>
+      </div>
         <section
           style={{ background: "#FAF0E6" }}
           className="bg-white rounded-lg shadow-lg p-6 mb-6"
@@ -303,14 +307,14 @@ export const Transport = () => {
           </div>
 
           {/* buttons   */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
             <button
               onClick={() => selectTransportType("Car")}
               className={`transport-button ${
                 selectedTransportType === "Car" ? "active" : ""
               }`}
             >
-              <div className="text-3xl mb-1 flex justify-center">
+              <div className="mb-1 flex justify-center">
                 {<CarFront color="currentColor" />}
               </div>
               <div className="text-sm font-medium">Add Car Emissions</div>
@@ -322,7 +326,7 @@ export const Transport = () => {
                 selectedTransportType === "Bus" ? "active" : ""
               }`}
             >
-              <div className="text-3xl mb-1 flex justify-center">
+              <div className="mb-1 flex justify-center">
                 {<BusFront color="currentColor" />}
               </div>
               <div className="text-sm font-medium">Add Bus Emissions</div>
@@ -334,7 +338,7 @@ export const Transport = () => {
                 selectedTransportType === "Train" ? "active" : ""
               }`}
             >
-              <div className="text-3xl mb-1 flex justify-center">
+              <div className="mb-1 flex justify-center">
                 {<TrainFront color="currentColor" />}
               </div>
               <div className="text-sm font-medium">Add Train Emissions</div>
@@ -346,7 +350,7 @@ export const Transport = () => {
                 selectedTransportType === "Flight" ? "active" : ""
               }`}
             >
-              <div className="text-3xl mb-1 flex justify-center">
+              <div className="mb-1 flex justify-center">
                 {<Plane color="currentColor" />}
               </div>
               <div className="text-sm font-medium">Add Flight Emissions</div>

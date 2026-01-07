@@ -5,7 +5,8 @@ import animate2 from "../assets/animate2.png";
 export const About = () => {
   return (
     <>
-      <div className="mr-[10vw] ml-[10vw] mt-[2vh] p-8 rounded-lg max-[1200px]:mr-[2vw] max-[1200px]:ml-[2vw]">
+      {/* <div className="mr-[10vw] ml-[10vw] mt-[2vh] p-8 rounded-lg max-[1200px]:mr-[2vw] max-[1200px]:ml-[2vw]"> */}
+        <div className="mr-[10vw] ml-[10vw] mt-2vh max-[1200px]:mr-[2vw] max-[1200px]:ml-[2vw]">
         <section className="flex items-center gap-8 max-[1200px]:flex-col">
           <img src={GreenStepsLogo} alt="logo" className="rounded-4xl min-[2000px]:w-[600px]"></img>
           <div className=" backdrop-blur-lg bg-white/10 shadow-xl p-6 min-[2000px]:p-10 rounded-tl-[55px] rounded-tr-lg rounded-bl-lg rounded-br-[55px]">

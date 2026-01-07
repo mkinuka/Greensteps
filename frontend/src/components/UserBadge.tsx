@@ -39,6 +39,7 @@ export const UserBadge = () => {
     return name.substring(0, maxLength) + '...';
   };
 
+  // console.log(user)
 const userLogOut = async () => {
   try {
     const response = await fetch('http://localhost:3000/auth/logout', {
