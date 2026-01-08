@@ -102,20 +102,20 @@ export const Settings = () => {
     }
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen bg-green-50 p-4">
-  //       <div className="max-w-2xl mx-auto">
-  //         <h1 className="text-black font-semibold text-4xl mb-2">
-  //           Inställningar
-  //         </h1>
-  //         <div className="text-center py-8">
-  //           <p className="text-green-600">Laddar...</p>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-green-50 p-4">
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-black font-semibold text-4xl mb-2">
+            Inställningar
+          </h1>
+          <div className="text-center py-8">
+            <p className="text-green-600">Laddar...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-4">
