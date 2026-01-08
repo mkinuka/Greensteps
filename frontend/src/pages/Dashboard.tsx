@@ -138,7 +138,7 @@ export const DashBoard = () => {
     <>
       <div className="mr-10vw ml-10vw mt-2vh">
         <h1 className="text-black font-semibold text-4xl mb-2">Dashboard</h1>
-        <p className="text-gray-600 text-xl mb-8">Welcome, {userName}!</p>
+        <p className="text-gray-600 font-semibold text-xl mb-8 capitalize">Welcome back, {userName}!</p>
 
         {/* Global date selector */}
         <section className="bg-blue-50 rounded-lg shadow-lg p-6 mb-6">
@@ -173,13 +173,13 @@ export const DashBoard = () => {
             <div className="flex gap-2">
               <button
                 onClick={goToYesterday}
-                className="text-black px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm"
+                className="text-black px-4 py-2 bg-blue-400 hover:bg-blue-600 hover:text-white transition ease-in-out cursor-pointer rounded-lg transition-colors text-sm"
               >
                 Yesterday
               </button>
               <button
                 onClick={goToToday}
-                className="px-4 py-2 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg transition-colors text-sm"
+                className="text-black px-4 py-2 bg-blue-400 hover:bg-blue-600 hover:text-white transition ease-in-out cursor-pointer rounded-lg transition-colors text-sm"
               >
                 Today
               </button>

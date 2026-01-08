@@ -89,7 +89,7 @@ export const fetchTodayTrains = async (
   }
 };
 
-// Ny endpoint som tar emot datum som query parameter
+// Ny endpoint som tar emot datum som parameter
 export const fetchTrainsByDate = async (
   req: Request,
   res: Response

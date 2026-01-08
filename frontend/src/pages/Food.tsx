@@ -72,7 +72,7 @@ export const Food = () => {
       foodName: selectedFood,
       quantity: parseFloat(quantity),
       emissions,
-      date: selectedDate, // Use the selected date from context
+      date: selectedDate,
     };
 
     try {

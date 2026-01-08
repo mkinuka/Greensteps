@@ -102,33 +102,33 @@ export const Settings = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-green-50 p-4">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-3xl font-bold text-green-800 mb-8">
-            Inställningar
-          </h1>
-          <div className="text-center py-8">
-            <p className="text-green-600">Laddar...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="min-h-screen bg-green-50 p-4">
+  //       <div className="max-w-2xl mx-auto">
+  //         <h1 className="text-black font-semibold text-4xl mb-2">
+  //           Inställningar
+  //         </h1>
+  //         <div className="text-center py-8">
+  //           <p className="text-green-600">Laddar...</p>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="min-h-screen p-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-green-800 mb-8">
-          Inställningar
+        <h1 className="text-black font-semibold text-4xl mb-2">
+          Settings
         </h1>
 
         {/* User Section */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h2 className="text-xl font-semibold text-green-700 mb-4 flex items-center">
+          <h2 className="text-xl font-semibold text-black mb-4 flex items-center">
             <User className="mr-2" size={24} />
-            Konto
+            Account
           </h2>
           <div className="space-y-4">
             <button
@@ -136,14 +136,14 @@ export const Settings = () => {
               className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center"
             >
               <LogOut className="mr-2" size={20} />
-              Logga ut
+              Log out
             </button>
             <button
               onClick={handleDeleteAccount}
               className="w-full bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center"
             >
               <Trash2 className="mr-2" size={20} />
-              Ta bort konto
+              Remove Account
             </button>
           </div>
         </div>
@@ -152,12 +152,12 @@ export const Settings = () => {
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-green-700 mb-4 flex items-center">
             <Car className="mr-2" size={24} />
-            Sparade bilar ({savedCars.length})
+            Saved cars ({savedCars.length})
           </h2>
 
           {savedCars.length === 0 ? (
             <p className="text-gray-500 text-center py-4">
-              Du har inga sparade bilar ännu.
+              You have no saved cars yet.
             </p>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
